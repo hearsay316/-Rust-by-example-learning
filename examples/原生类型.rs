@@ -32,21 +32,30 @@ let  logical:bool = true;
     println!("mun :{mun}")
 }
 //  力扣  136
+// fn single_number(nums: Vec<i32>) ->  i32 {
+//    let mut  map = std::collections::HashMap::new();
+//     for num in nums {
+//         if(map.contains_key(&num)){
+//             *map.get_mut(&num).unwrap() += 1;
+//         }
+//         else{
+//             map.insert(num, 1);
+//         }
+//     }
+//     for (key, val) in map.iter() {
+//         println!("key: {key} val: {val}");
+//         if *val == 1 {
+//             return *key;
+//         }
+//     }
+//     return  0;
+// }
+
 fn single_number(nums: Vec<i32>) ->  i32 {
-   let mut  map = std::collections::HashMap::new();
+    let mut  s = 0;
     for num in nums {
-        if(map.contains_key(&num)){
-            *map.get_mut(&num).unwrap() += 1;
-        }
-        else{
-            map.insert(num, 1);
-        }
+        s^=num;
     }
-    for (key, val) in map.iter() {
-        println!("key: {key} val: {val}");
-        if *val == 1 {
-            return *key;
-        }
-    }
-    return  0;
+
+    return  s;
 }
