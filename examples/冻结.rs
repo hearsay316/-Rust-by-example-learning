@@ -9,3 +9,10 @@ fn main(){
     _mutable_integer = 10;
     println!("mut int : {}",_mutable_integer);
 }
+/*类型系统
+Rust 提供了多种机制，用于改变或定义原生类型和用户定义类型。接下来会讲到：
+
+原生类型的类型转换（cast）。
+指定字面量的类型。
+使用类型推断（type inference）。
+给类型取别名（alias）。*/
