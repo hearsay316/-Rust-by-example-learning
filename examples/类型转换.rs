@@ -13,7 +13,7 @@ fn main(){
     // 直到值 位于新类型T的范围之内.
     println!("100 as u16 is : {}", 1000 as u16);
    // 1000 - 256 -256 -256  = 232   256 = 255+1
-    println!("1000 as a u8 is : {}", 1000 as u8);
+    println!("1000 as a u8 is : {}", 1000i32 as u8);
     println!("-1 as a u8: {}",(-1i8) as u8); // -1+256 = 255
     // 对于正数,这就和取模一样
     println!("1000 mod 256 is: {}",1000%256);
@@ -32,7 +32,7 @@ fn main(){
     // Unless it already fits, of course.
     println!("1000 as a u8 is :{}",1000 as u8);
     println!("1000 as a i8 is :{}",-1000 as i8);
-  ///error[E0604]: only `u8` can be cast as `char`, not `f32`
+  //error[E0604]: only `u8` can be cast as `char`, not `f32`
     // This behavior incurs a small runtime cost and can be avoided
     // with unsafe methods, however the results might overflow and
     // return **unsound values**. Use these methods wisely:
