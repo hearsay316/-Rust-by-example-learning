@@ -7,8 +7,15 @@
 #[derive(PartialEq)]
 enum Foo {Bar, User }
 fn main() {
-    let a = Foo::User;
+    let optional = Some(7);
+    match optional {
+        Some(i)=>{
+            println!(" This is  areally  long  string and `{:?}`",i)
+        },
+        _=>println!("测试")
+    }
 
+    let a = Foo::User;
     // 变量匹配 Foo::Bar
     if let Foo::Bar = a {
         // ^-- 这就是编译时发现的错误。使用 `if let` 来替换它。
