@@ -3,7 +3,7 @@ fn call_me<F: Fn()>(f: F) {
 }
 
 fn function() {
-    println!("I'm a function");
+    println!("I'my a function");
 }
 
 fn main() {
