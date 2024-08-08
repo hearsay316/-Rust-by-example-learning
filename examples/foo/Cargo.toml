@@ -1,0 +1,10 @@
+[package]
+name = "foo"
+version = "0.1.0"
+edition = "2021"
+authors = ["hearsay316"]
+build = "build.rs"
+[dependencies]
+clap="2.27.1" # 来自crate.is
+rand = {git="https://github.com/rust-lang-nursery/rand"}
+#bar = {path = "../library"}
