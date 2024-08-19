@@ -2,3 +2,4 @@
 .idea
 /examples/foo/.idea
 /examples/foo/target
+.vscode
