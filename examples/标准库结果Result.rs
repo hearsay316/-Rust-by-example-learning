@@ -1,9 +1,7 @@
 fn main() {
-    checked::op(1.0,10.0);
+    checked::op(1.0, 10.0);
     // println!("{}", op(1.0, 10.0));
-
 }
-
 
 mod checked {
     #[derive(Debug)]
@@ -41,15 +39,17 @@ mod checked {
         let ln = ln(ratio)?;
         sqrt(ln)
     }
-    pub fn  op (x:f64,y:f64){
-        match op_(x,y){
-            Err(why)=>panic!("{}", match why {
-                MathError::NegativeLogarithm=>"logarithm of negative number",
-                MathError::DivisionByZero=>"division by zero",
-                MathError::NegativeSquareRoot=>"square root of nagative number"
-            }),
-            Ok(value)=>println!("{}",value),
-
+    pub fn op(x: f64, y: f64) {
+        match op_(x, y) {
+            Err(why) => panic!(
+                "{}",
+                match why {
+                    MathError::NegativeLogarithm => "logarithm of negative number",
+                    MathError::DivisionByZero => "division by zero",
+                    MathError::NegativeSquareRoot => "square root of nagative number",
+                }
+            ),
+            Ok(value) => println!("{}", value),
         }
     }
 }
@@ -60,8 +60,8 @@ fn op(x: f64, y: f64) -> f64 {
             Err(why) => panic!("{:?}", why),
             Ok(ln) => match checked::sqrt(ln) {
                 Err(e) => panic!("{:?}", e),
-                Ok(sqrt) => sqrt
-            }
-        }
+                Ok(sqrt) => sqrt,
+            },
+        },
     }
 }

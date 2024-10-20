@@ -14,7 +14,7 @@ impl List {
     fn len(&self) -> u32 {
         match *self {
             Cons(_, ref tail) => 1 + tail.len(),
-            Nil => 0
+            Nil => 0,
         }
     }
     fn stringify(&self) -> String {
@@ -22,9 +22,7 @@ impl List {
             Cons(head, ref tail) => {
                 format!("{},{}", head, tail.stringify())
             }
-            Nil => {
-                "Nil".to_string()
-            }
+            Nil => "Nil".to_string(),
         }
     }
 }

@@ -18,15 +18,14 @@ impl error::Error for EmptyVec {
 }
 
 fn double_first(vec: Vec<&str>) -> Result<i32> {
-    vec.first().ok_or_else(|| EmptyVec.into()) // 装箱
-        .and_then(|s| {
-            s.parse::<i32>().map_err(|e| e.into()).map(|i| 2 * i)
-        })
+    vec.first()
+        .ok_or_else(|| EmptyVec.into()) // 装箱
+        .and_then(|s| s.parse::<i32>().map_err(|e| e.into()).map(|i| 2 * i))
 }
 fn print(result: Result<i32>) {
     match result {
         Ok(n) => println!("The first doubled is {}", n),
-        Err(e) => println!("Error is {}", e)
+        Err(e) => println!("Error is {}", e),
     }
 }
 fn main() {

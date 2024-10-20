@@ -28,11 +28,11 @@ use std::mem;
 //     consume();
 // }
 
-fn main () {
-    let haystack = vec![1,2,3,4,5];
+fn main() {
+    let haystack = vec![1, 2, 3, 4, 5];
     let contains = move |needle| haystack.contains(&needle);
-    println!("{}",contains(1));
-    println!("{}",contains(2));
-    println!("{}",contains(9));
-    println!("{:?}",haystack);
+    println!("{}", contains(1));
+    println!("{}", contains(2));
+    println!("{}", contains(9));
+    println!("{:?}", haystack);
 }

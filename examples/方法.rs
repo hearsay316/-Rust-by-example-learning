@@ -9,16 +9,10 @@ impl Point {
     // 静态方法不需要被实例调用
     // 这类方法一般作构造器
     fn origin() -> Point {
-        Point {
-            x: 0.0,
-            y: 0.0,
-        }
+        Point { x: 0.0, y: 0.0 }
     }
     fn new(x: f64, y: f64) -> Point {
-        Point {
-            x,
-            y,
-        }
+        Point { x, y }
     }
 }
 #[derive(Debug)]
@@ -74,8 +68,8 @@ fn main() {
 
     // rectangle.translate();
 
-    square.translate(1.0,1.0);
-    println!("square :{:?}",square);
-    let pair = Pair(Box::new(1),Box::new(2));
+    square.translate(1.0, 1.0);
+    println!("square :{:?}", square);
+    let pair = Pair(Box::new(1), Box::new(2));
     pair.destroy();
 }

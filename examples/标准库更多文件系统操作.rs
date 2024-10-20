@@ -142,7 +142,7 @@ fn main() {
     // Create a directory, returns `io::Result<()>`
     match fs::create_dir("a") {
         Err(why) => println!("! {:?}", why.kind()),
-        Ok(_) => {},
+        Ok(_) => {}
     }
 
     println!("`echo hello > a/b.txt`");
@@ -164,16 +164,18 @@ fn main() {
 
     println!("`ln -s a/b.txt a/c/b.txt`");
     // Create a symbolic link, returns `io::Result<()>`
-    #[cfg(target_family = "unix")] {
+    #[cfg(target_family = "unix")]
+    {
         unix::fs::symlink("../b.txt", "a/c/b.txt").unwrap_or_else(|why| {
             println!("! {:?}", why.kind());
         });
     }
-    fs::symlink_metadata("a/b.txt").unwrap_or_else(|why|{
+    fs::symlink_metadata("a/b.txt").unwrap_or_else(|why| {
         println!("!qqq {:?}", why);
-        panic!("!{:?}",why)
+        panic!("!{:?}", why)
     });
-    #[cfg(target_family = "windows")] {
+    #[cfg(target_family = "windows")]
+    {
         windows::fs::symlink_file("../b.txt", "a/c/b.txt").unwrap_or_else(|why| {
             println!("!ssss {:?}", why);
         });
@@ -189,9 +191,11 @@ fn main() {
     // Read the contents of a directory, returns `io::Result<Vec<Path>>`
     match fs::read_dir("a") {
         Err(why) => println!("! {:?}", why.kind()),
-        Ok(paths) => for path in paths {
-            println!("> {:?}", path.unwrap().path());
-        },
+        Ok(paths) => {
+            for path in paths {
+                println!("> {:?}", path.unwrap().path());
+            }
+        }
     }
 
     // println!("`rm a/c/e.txt`");

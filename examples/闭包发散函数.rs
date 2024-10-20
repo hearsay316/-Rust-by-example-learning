@@ -21,11 +21,14 @@ fn main() {
                 true => i,
                 false => continue,
             };
-            println!("{}",addition);
+            println!("{}", addition);
             acc += addition;
         }
         acc
     }
-    println!("Sum of add numbers up to 9 (excluding):{}",sum_odd_numbers(9));
-    println!("{}",1%2);
+    println!(
+        "Sum of add numbers up to 9 (excluding):{}",
+        sum_odd_numbers(9)
+    );
+    println!("{}", 1 % 2);
 }

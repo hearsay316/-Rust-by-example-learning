@@ -1,24 +1,23 @@
 // super  self
-fn function(){
+fn function() {
     println!("called `function()`");
 }
 mod cool {
-    pub fn function(){
+    pub fn function() {
         println!("called `cool::function()`");
     }
 }
-mod my{
-    fn  function(){
+mod my {
+    fn function() {
         println!("called `my::function()`");
     }
-    mod cool{
-        pub fn function(){
+    mod cool {
+        pub fn function() {
             println!("called `my::cool::function()`");
             super::super::function();
         }
-
     }
-    pub fn indirect_call(){
+    pub fn indirect_call() {
         print!("called `my::indirect_call()`,that\n>");
         // `self`关键字表示当前的模块用作域--在这个例子是`my`
         // 调用 `self::function()`和直接调用`function()` 都的到相同的结果
@@ -36,6 +35,6 @@ mod my{
     }
 }
 
-fn main(){
+fn main() {
     my::indirect_call();
 }

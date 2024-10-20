@@ -1,18 +1,20 @@
-
 // 该枚举故意未注明 `#[derive(PartialEq)]`，
 // 并且也没为其实现 `PartialEq`。这就是为什么下面比较 `Foo::Bar==a` 会失败的原因。
 
 #![allow(dead_code)]
 
 #[derive(PartialEq)]
-enum Foo {Bar, User }
+enum Foo {
+    Bar,
+    User,
+}
 fn main() {
     let optional = Some(7);
     match optional {
-        Some(i)=>{
-            println!(" This is  areally  long  string and `{:?}`",i)
-        },
-        _=>println!("测试")
+        Some(i) => {
+            println!(" This is  areally  long  string and `{:?}`", i)
+        }
+        _ => println!("测试"),
     }
 
     let a = Foo::User;
@@ -20,7 +22,7 @@ fn main() {
     if let Foo::Bar = a {
         // ^-- 这就是编译时发现的错误。使用 `if let` 来替换它。
         println!("a is foobar ");
-    }else{
+    } else {
         println!("zzz")
     }
 }

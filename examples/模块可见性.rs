@@ -1,63 +1,63 @@
 mod my_mod {
-    fn private_function(){
+    fn private_function() {
         println!("called `my_mod::private_function()`");
     }
-    pub fn function(){
+    pub fn function() {
         private_function();
         println!("called `my_mod::function()`");
     }
-    pub fn indireact_access(){
+    pub fn indireact_access() {
         print!("called `my_mod::indireact_access()`,that\n>");
     }
-    pub mod nested{
-        pub fn funtion(){
+    pub mod nested {
+        pub fn funtion() {
             println!("called `my_mod::nested::function()`");
             private_function();
         }
         #[allow(dead_code)]
-        fn private_function(){
+        fn private_function() {
             println!("called `my_mod::nested::private_function()`");
             public_function_in_super_mod();
             public_function_in_my_mod();
         }
         // 使用 `pub(in path)` 语法定义的函数只在给定的路径中可见。
         // `path` 必须是父模块（parent module）或祖先模块（ancestor module）
-        pub(in crate::my_mod) fn public_function_in_my_mod(){
+        pub(in crate::my_mod) fn public_function_in_my_mod() {
             print!("called `my_mod::nested::public_function_in_my_mod()`,that\n > ");
             public_function_in_nested()
         }
-        pub(self) fn public_function_in_nested(){
+        pub(self) fn public_function_in_nested() {
             println!("called `mu_mod::nested::public_function_in_nested`");
         }
-        pub(super) fn public_function_in_super_mod(){
+        pub(super) fn public_function_in_super_mod() {
             println!("called my_mod::nested::public_function_in_super_mod");
         }
     }
 
-    pub(super) fn call_public_function_in_my_mod(){
+    pub(super) fn call_public_function_in_my_mod() {
         print!("called `my_mod::call_public_function_in_my_mod()`,that\n>");
         nested::public_function_in_my_mod();
         print!(">");
         nested::public_function_in_super_mod()
     }
-    pub(crate) fn public_function_in_crate(){
+    pub(crate) fn public_function_in_crate() {
         println!("called `my_mod::public_function_in_crate()`");
         public_function_in_crate2();
     }
-    pub(crate) fn public_function_in_crate2(){
+    pub(crate) fn public_function_in_crate2() {
         println!("called `my_mod::public_function_in_crate2()`");
     }
-    mod private_nested{
+    mod private_nested {
         #[allow(dead_code)]
-        pub fn function(){
+        pub fn function() {
             println!("called `my_mod::private_nested::function()`")
         }
     }
 }
-fn function(){
+fn function() {
     println!("called `function()`");
 }
-fn  main(){
+fn main() {
     function();
     my_mod::function();
     my_mod::public_function_in_crate();

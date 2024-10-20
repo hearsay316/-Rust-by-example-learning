@@ -8,7 +8,7 @@ trait Contains<A, B> {
 impl Contains<i32, i32> for Container {
     // 如果存储的数字和给定的数字相等则为真.
     fn contains(&self, number_1: &i32, number_2: &i32) -> bool {
-        println!("{}-{}-{}-{}",number_1,number_2,self.0,self.1);
+        println!("{}-{}-{}-{}", number_1, number_2, self.0, self.1);
         (&self.0 == number_1) == (&self.1 == number_2)
     }
     // 得到第一个数字
@@ -27,13 +27,17 @@ where
     container.last() - container.first()
 }
 
-
-fn main(){
+fn main() {
     let number_1 = 1;
     let number_2 = 10;
-    let container = Container(number_1,number_2);
-    println!("Doe|s container contain {} and {} :{}",&number_1,&number_2,container.contains(&number_1,&number_2));
-    println!("First number:{}",container.first());
-    println!("Last number:{}",container.last());
-    println!("The difference is:{} ",difference(&container));
+    let container = Container(number_1, number_2);
+    println!(
+        "Doe|s container contain {} and {} :{}",
+        &number_1,
+        &number_2,
+        container.contains(&number_1, &number_2)
+    );
+    println!("First number:{}", container.first());
+    println!("Last number:{}", container.last());
+    println!("The difference is:{} ", difference(&container));
 }

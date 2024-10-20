@@ -8,24 +8,22 @@
 // }
 #[derive(Debug)]
 struct Number {
-    value: i32
+    value: i32,
 }
-impl Number{
-    fn new(item:i32)->Self{
-        Number{
-            value:item
-        }
+impl Number {
+    fn new(item: i32) -> Self {
+        Number { value: item }
     }
 }
-impl From<i32> for Number{
-    fn from(item:i32)->Self{
+impl From<i32> for Number {
+    fn from(item: i32) -> Self {
         Number::new(item)
     }
 }
-fn main(){
-  let num = Number::from(30);
-    println!("My Number is : {:?}",num);
+fn main() {
+    let num = Number::from(30);
+    println!("My Number is : {:?}", num);
     let num2 = 5;
-    let num_number :Number= num2.into();
-    println!("num_number is :{:?} ",num_number);
+    let num_number: Number = num2.into();
+    println!("num_number is :{:?} ", num_number);
 }

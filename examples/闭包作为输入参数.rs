@@ -1,7 +1,7 @@
 fn apply<F>(f: F)
 where
-// 闭包没有输入值和返回值。
-    F:  FnOnce(),
+    // 闭包没有输入值和返回值。
+    F: FnOnce(),
 {
     f();
 }

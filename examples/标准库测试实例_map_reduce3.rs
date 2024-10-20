@@ -172,10 +172,7 @@ fn main() {
         // 用单独的线程处理每一段数据
         children.push(thread::spawn(move || -> u32 {
             // 计算该段的每一位的和：
-            let result = data_segment
-                .chars()
-                .filter_map(|c| c.to_digit(10))
-                .sum();
+            let result = data_segment.chars().filter_map(|c| c.to_digit(10)).sum();
 
             println!("processed segment {}, result={}", i, result);
 

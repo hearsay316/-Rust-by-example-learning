@@ -22,7 +22,6 @@ impl fmt::Display for List {
             //     write!(f, ": ")?;
             // }
             write!(f, "{}", value)?;
-
         }
         write!(f, "}}")
     }

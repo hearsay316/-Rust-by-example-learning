@@ -1,8 +1,8 @@
 use std::thread;
 use std::time::Instant;
-fn main(){
+fn main() {
     let now = Instant::now();
-    let  mut children = vec![];
+    let mut children = vec![];
     let data = "86967897737416471853297327050364959
 11861322575564723963297542624962850
 70856234701860851907960690014725639
@@ -146,17 +146,18 @@ fn main(){
 16278424637452589860345374828574668";
     // let mut children = vec![];
     let chunked_data = data.split_whitespace();
-    for data_segment in chunked_data.into_iter(){
-        children.push(thread::spawn(move||->u32{
-            let result = data_segment.chars()
-                .map(|c|c.to_digit(10).expect("should be a digit"))
+    for data_segment in chunked_data.into_iter() {
+        children.push(thread::spawn(move || -> u32 {
+            let result = data_segment
+                .chars()
+                .map(|c| c.to_digit(10).expect("should be a digit"))
                 .sum();
             result
         }))
     }
 
-    let mut  intermediate_sums = vec![];
-    for child in children{
+    let mut intermediate_sums = vec![];
+    for child in children {
         let intermediate_sum = child.join().unwrap();
         intermediate_sums.push(intermediate_sum);
     }

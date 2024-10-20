@@ -8,16 +8,18 @@ use std::fmt::Debug;
 //     D:TraitE+TraitF{
 //
 // }
-trait PrintInOption{
+trait PrintInOption {
     fn print_in_option(self);
 }
-impl<T> PrintInOption for T where
-   Option<T>:Debug{
+impl<T> PrintInOption for T
+where
+    Option<T>: Debug,
+{
     fn print_in_option(self) {
-        println!("{:?}",Some(self));
+        println!("{:?}", Some(self));
     }
 }
 fn main() {
-    let vec = vec![1,2,3,4];
+    let vec = vec![1, 2, 3, 4];
     vec.print_in_option();
 }

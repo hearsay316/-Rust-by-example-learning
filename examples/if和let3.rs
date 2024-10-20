@@ -6,22 +6,22 @@
 enum Foo {
     Bar,
     Baz,
-    Qux(u32)
+    Qux(u32),
 }
-fn main(){
+fn main() {
     //  创建变量
     let a = Foo::Bar;
     let b = Foo::Baz;
     let c = Foo::Qux(100);
 
-    if let Foo::Bar = a{
+    if let Foo::Bar = a {
         println!("a is foobar");
     }
 
-    if let Foo::Bar =b {
+    if let Foo::Bar = b {
         println!("b is foobar")
     }
-    if let Foo::Qux(value) = c{
-        println!("c is {} ",value);
+    if let Foo::Qux(value) = c {
+        println!("c is {} ", value);
     }
 }

@@ -4,7 +4,6 @@ use std::thread;
 
 static NTHREADS: i32 = 3;
 
-
 fn main() {
     let (tx, rx): (Sender<i32>, Receiver<i32>) = mpsc::channel();
     for id in 0..NTHREADS {
@@ -18,5 +17,5 @@ fn main() {
     for _ in 0..NTHREADS {
         ids.push(rx.recv());
     }
-    println!("{:?}",ids);
+    println!("{:?}", ids);
 }

@@ -6,18 +6,17 @@ macro_rules! calculate{
     }}
 }
 
-
-fn main(){
-    calculate!{
+fn main() {
+    calculate! {
         eval 1 + 1 // 看到了吧 `eval` 可不是rust的关键字
 
     }
-    calculate!{
+    calculate! {
         eval  (1+2)*(3/4)
     }
     add();
 }
 
-fn add(){
+fn add() {
     println!("func: add")
 }

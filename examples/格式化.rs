@@ -5,7 +5,7 @@
 // 这个格式化的功能是通过 trait实现的,每种参数类型都对应一种 trait, 最常见的格式化 trait 就是 display,它可以处理参数类型
 // 为未指定的情况 ,比如{}'
 
-use std::fmt::{Formatter, Display, Result};
+use std::fmt::{Display, Formatter, Result};
 
 struct City {
     name: &'static str,
@@ -15,17 +15,17 @@ struct City {
 impl Display for City {
     // `f` 是一个缓冲区（buffer），此方法必须将格式化后的字符串写入其中
     fn fmt(&self, f: &mut Formatter) -> Result {
-        let lat_c = if self.lat >= 0.0 {
-            "N"
-        } else {
-            "S"
-        };
-        let lon_c = if self.lon >= 0.0 {
-            "E"
-        } else {
-            "W"
-        };
-        write!(f, "{}:{:.3}°{} {:.3}°{}", self.name, self.lat.abs(), lat_c, self.lon.abs(), lon_c)
+        let lat_c = if self.lat >= 0.0 { "N" } else { "S" };
+        let lon_c = if self.lon >= 0.0 { "E" } else { "W" };
+        write!(
+            f,
+            "{}:{:.3}°{} {:.3}°{}",
+            self.name,
+            self.lat.abs(),
+            lat_c,
+            self.lon.abs(),
+            lon_c
+        )
     }
 }
 #[derive(Debug)]
@@ -36,8 +36,14 @@ struct Color {
 }
 impl Display for Color {
     fn fmt(&self, f: &mut Formatter) -> Result {
-        write!(f, "RGB ({}, {}, {}) 0x{:06X}", self.red, self.green, self.blue,
-               self.red as u32 * 65536 + self.green as u32 * 256 + self.blue as u32)
+        write!(
+            f,
+            "RGB ({}, {}, {}) 0x{:06X}",
+            self.red,
+            self.green,
+            self.blue,
+            self.red as u32 * 65536 + self.green as u32 * 256 + self.blue as u32
+        )
     }
 }
 fn main() {
@@ -56,8 +62,10 @@ fn main() {
             name: "Vancouver",
             lat: 49.25,
             lon: -123.1,
-        }
-    ].iter() {
+        },
+    ]
+    .iter()
+    {
         println!("{}", *city)
     }
     for color in [
@@ -75,8 +83,10 @@ fn main() {
             red: 0,
             green: 0,
             blue: 0,
-        }
-    ].iter() {
+        },
+    ]
+    .iter()
+    {
         println!("{}", *color);
     }
 }

@@ -1,8 +1,8 @@
-macro_rules! say_hello{
-    ()=>(
+macro_rules! say_hello {
+    () => {
         println!("Hello");
-    )
+    };
 }
-fn main(){
+fn main() {
     say_hello!();
 }

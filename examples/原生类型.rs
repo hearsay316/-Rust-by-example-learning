@@ -15,9 +15,9 @@ rust提供了很多原生类型
 
 */
 
-fn  main(){
-let  logical:bool = true;
-    let a_float:f64 = 1.0;
+fn main() {
+    let logical: bool = true;
+    let a_float: f64 = 1.0;
     let an_integer = 5i32;
     let default_float = 3.0;
     let default_integer = 7;
@@ -25,10 +25,10 @@ let  logical:bool = true;
     inferred_type = 429467296i64;
 
     let mut mutable = 12;
-    mutable  = 21;
+    mutable = 21;
     // mutable = true;
     let mut matble = true;
-   let mun =  single_number(vec![1,23,23,25,25]);
+    let mun = single_number(vec![1, 23, 23, 25, 25]);
     println!("mun :{mun}")
 }
 //  力扣  136
@@ -51,11 +51,11 @@ let  logical:bool = true;
 //     return  0;
 // }
 
-fn single_number(nums: Vec<i32>) ->  i32 {
-    let mut  s = 0;
+fn single_number(nums: Vec<i32>) -> i32 {
+    let mut s = 0;
     for num in nums {
-        s^=num;
+        s ^= num;
     }
 
-    return  s;
+    return s;
 }

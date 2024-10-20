@@ -5,31 +5,27 @@ struct Borrowed<'a>(&'a i32);
 
 // 和前面的类似,这里引用都需要比这个结构体长寿
 #[derive(Debug)]
-struct NameBorrowed<'a>{
-    x:&'a i32,
-    y:&'a i32
+struct NameBorrowed<'a> {
+    x: &'a i32,
+    y: &'a i32,
 }
 
 #[derive(Debug)]
-enum Either<'a>{
+enum Either<'a> {
     Num(i32),
-    Ref(&'a i32)
+    Ref(&'a i32),
 }
-fn main (){
+fn main() {
     let x = 18;
     let y = 15;
     let single = Borrowed(&x);
-    let double = NameBorrowed{
-        x:&x,
-        y:&y
-    };
+    let double = NameBorrowed { x: &x, y: &y };
     let reference = Either::Ref(&x);
     let number = Either::Num(y);
-    println!("x is borrowed in {:?}",single.0);
-    println!("x and y are borrowed in {:?}",double);
-    println!("x is borrowed in {:?}",reference);
-    println!("y is *not* borrowed in {:?}",number);
-
+    println!("x is borrowed in {:?}", single.0);
+    println!("x and y are borrowed in {:?}", double);
+    println!("x is borrowed in {:?}", reference);
+    println!("y is *not* borrowed in {:?}", number);
 }
 /*
 

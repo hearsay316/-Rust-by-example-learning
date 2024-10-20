@@ -8,8 +8,9 @@ fn reverse(pair: (i32, bool)) -> (bool, i32) {
 #[derive(Debug)]
 struct Matrix(f32, f32, f32, f32);
 fn main() {
-    let long_tuple = (1u8, 2u16, 3u32, 4u64, -1i8, -2i16, -3i32, -4i64, 0.1f32, 0.2f64,
-                      'a', true);
+    let long_tuple = (
+        1u8, 2u16, 3u32, 4u64, -1i8, -2i16, -3i32, -4i64, 0.1f32, 0.2f64, 'a', true,
+    );
     // 通过元组的下标来访问具体的值
     println!("long tuple first value{}", long_tuple.0);
     println!("long tuple second value:{}", long_tuple.1);
@@ -31,8 +32,8 @@ fn main() {
     println!("{:?} ,{:?},{:?},{:?}", a, b, c, d);
     let matrix = Matrix(1.1, 1.2, 2.1, 2.2);
     println!("matrix:{:?}", matrix);
-    println!("{}",matrix);
-    println!("{}",transpose(matrix));
+    println!("{}", matrix);
+    println!("{}", transpose(matrix));
 }
 //复习：在上面的例子中给 Matrix 结构体 加上 fmt::Display trait，这样当你从 Debug 格式化 {:?} 切换到 Display 格式化 {} 时，会得到如下的输出：
 //
@@ -59,8 +60,8 @@ impl Display for Matrix {
 // Transpose:
 // ( 1.1 2.1 )
 // ( 1.2 2.2 )
-fn transpose(tr:Matrix)->Matrix{
-    let Matrix(a,b,c,d) = tr;
-    Matrix(a,c,b,d)
+fn transpose(tr: Matrix) -> Matrix {
+    let Matrix(a, b, c, d) = tr;
+    Matrix(a, c, b, d)
 }
 // 这个打字真的好无聊  还是喜欢二指禅 ,那种方式比较好,你们觉得呢?已经可以这样说了吧use  display fmt  cargo run

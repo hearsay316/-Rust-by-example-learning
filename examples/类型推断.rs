@@ -1,4 +1,4 @@
-fn main(){
+fn main() {
     /*
     Rust 的类型推断引擎是很聪明的，
     它不只是在初始化时看看右值（r-value）的类型而已，
@@ -8,6 +8,5 @@ fn main(){
     let elem = 5u8;
     let mut vec = Vec::new();
     vec.push(elem);
-    println!("{:?}",vec);
+    println!("{:?}", vec);
 }
-

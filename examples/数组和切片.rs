@@ -11,29 +11,28 @@
 */
 use std::mem;
 
-fn analyze_slice (slice:&[i32]){
-    println!("array is :{:?}",slice);
-      println!("first element of the slice:{}",slice[0]);
-      println!("the slice has {} element ",slice.len());
-  }
-fn main (){
-let xs:[i32;5] = [1,2,3,4,5];
+fn analyze_slice(slice: &[i32]) {
+    println!("array is :{:?}", slice);
+    println!("first element of the slice:{}", slice[0]);
+    println!("the slice has {} element ", slice.len());
+}
+fn main() {
+    let xs: [i32; 5] = [1, 2, 3, 4, 5];
     // 所有元素可以初始化成相同的值
-    let ys:[i32;500] = [0;500];
-    println!("打印数组的全部{:?}",ys);
-    println!("first element of the array:{}",xs[0]);
+    let ys: [i32; 500] = [0; 500];
+    println!("打印数组的全部{:?}", ys);
+    println!("first element of the array:{}", xs[0]);
 
-    println!("SECOND element of the array:{}",xs[1]);
-    println!("array size :{}",xs.len());
+    println!("SECOND element of the array:{}", xs[1]);
+    println!("array size :{}", xs.len());
     //   数组在栈中分配
     println!("array  occupise {} bytes", mem::size_of_val(&xs));
     // mem::size_of_val(&xx)
     println!("borrow the whole array as a slice");
     analyze_slice(&xs);
-   // slice 可以指向数组中的一部分
+    // slice 可以指向数组中的一部分
     println!("borrow a section of the array as a slice ");
     analyze_slice(&xs[1..=4]);
     // 数组越界
     // println!("{}",xs[5]);
-
 }

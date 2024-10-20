@@ -28,9 +28,6 @@ struct S<T: Debug>(Vec<T>);
 
 fn main() {
     // 报错！`Vec<T>` 未实现 `Display`。此次泛型具体化失败。
-    let s = S(vec![11,2,3,]);
+    let s = S(vec![11, 2, 3]);
     printer(s);
 }
-
-
-

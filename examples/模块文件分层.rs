@@ -1,9 +1,9 @@
 mod my;
-fn function(){
+fn function() {
     println!("called `function()`");
 }
 
-fn main(){
+fn main() {
     my::function();
     my::indirect_access();
     my::nested::function();

@@ -168,9 +168,7 @@ fn main() {
         }
     }
     for (_, chars) in hashmap.into_iter() {
-        children.push(thread::spawn(move || -> u32 {
-            chars.iter().sum::<u32>()
-        }))
+        children.push(thread::spawn(move || -> u32 { chars.iter().sum::<u32>() }))
     }
     let mut intermediate_sums = vec![];
     for child in children {

@@ -29,7 +29,7 @@ impl Person {
 
     /// 给一个友好的问候！
     /// 对被叫到的 `Person` 说 "Hello, [name]" 。
-    pub fn hello(& self) {
+    pub fn hello(&self) {
         println!("Hello, {}!", self.name);
     }
 }

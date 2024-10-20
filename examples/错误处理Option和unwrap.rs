@@ -1,24 +1,20 @@
-
-fn give_commoner(gift:Option<&str>){
-    match gift{
-        Some("snake")=>println!("Yuck! I'm throwing that snake in a fire."),
-        Some(inner)=>println!("{}? How nice.", inner),
-        none=>println!("No gift? Oh well.")
+fn give_commoner(gift: Option<&str>) {
+    match gift {
+        Some("snake") => println!("Yuck! I'm throwing that snake in a fire."),
+        Some(inner) => println!("{}? How nice.", inner),
+        none => println!("No gift? Oh well."),
     }
 }
 
-fn give_princess(gift:Option<&str>){
+fn give_princess(gift: Option<&str>) {
     let inside = gift.expect("1No gift? Oh well.");
-    if inside =="snake"{
+    if inside == "snake" {
         panic!("AAAaaaaa!!!!");
     }
-    println!("I love {}s !!!!!",inside);
+    println!("I love {}s !!!!!", inside);
 }
 
-
-
 fn main() {
-
     let food = Some("chicken");
     let snake = Some("snake");
     let void = None;

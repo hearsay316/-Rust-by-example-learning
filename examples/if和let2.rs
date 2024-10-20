@@ -3,7 +3,6 @@
 
 #![allow(dead_code)]
 
-
 fn main() {
     let number = Some(7);
     let letter: Option<i32> = None;
