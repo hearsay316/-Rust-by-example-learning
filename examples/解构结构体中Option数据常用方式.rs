@@ -42,17 +42,34 @@ fn build4(options: Option<Options>) -> (HashMap<String, Vec<String>>, Vec<String
             )
         })
 }
-
+fn build5(options: Option<Options>) -> (HashMap<String, Vec<String>>, Vec<String>, String) {
+    Some(options.unwrap_or_else(|| Options {
+        alias: Some(HashMap::default()),
+        modules: Some(Vec::default()),
+        cwd: Some(String::default()),
+    }))
+    .and_then(|opts| {
+        Some((
+            opts.alias.clone().unwrap_or_default(),
+            opts.modules
+                .clone()
+                .unwrap_or_else(|| vec!["node_modules".into(), "web_modules".into()]),
+            opts.cwd
+                .clone()
+                .map(|cwd| PathBuf::from(cwd).join("").to_string_lossy().into_owned())
+                .unwrap_or_default(),
+        ))
+    })
+    .unwrap()
+}
 fn build3(options: Option<Options>) -> (HashMap<String, Vec<String>>, Vec<String>, String) {
     options
         .and_then(|opts| {
             Some((
-                opts.alias.clone().unwrap_or_default(),
+                opts.alias.unwrap_or_default(),
                 opts.modules
-                    .clone()
                     .unwrap_or_else(|| vec!["node_modules".into(), "web_modules".into()]),
                 opts.cwd
-                    .clone()
                     .map(|cwd| PathBuf::from(cwd).join("").to_string_lossy().into_owned())
                     .unwrap_or_default(),
             ))
@@ -102,7 +119,10 @@ struct Options {
     modules: Option<Vec<String>>,
     cwd: Option<String>,
 }
-
+/// build  Function executed in: 972.4µs
+/// build2 Function executed in: 957.9µs
+/// build3 Function executed in: 1.0364ms
+/// build4 Function executed in: 952.4µs
 fn main() {
     let options = Some(Options {
         alias: None,
@@ -110,20 +130,23 @@ fn main() {
         cwd: None,
     });
     let start1 = Instant::now();
-    build(options.clone());
+    for _ in 0..10000 {
+        build(options.clone());
+    }
+
     let duration1 = start1.elapsed();
     println!("Function executed in: {:?}", duration1);
-    let start2 = Instant::now();
-    build2(options.clone());
-    let duration2 = start2.elapsed();
-    println!("Function executed in: {:?}", duration2);
-    let start3 = Instant::now();
-    build4(options.clone());
-    let duration3 = start3.elapsed();
-    println!("Function executed in: {:?}", duration3);
-    let start4 = Instant::now();
-    build3(options.clone());
-    let duration4 = start4.elapsed();
-    println!("Function executed in: {:?}", duration4);
+    // let start2 = Instant::now();
+    // build2(options.clone());
+    // let duration2 = start2.elapsed();
+    // println!("Function executed in: {:?}", duration2);
+    // let start3 = Instant::now();
+    // build4(options.clone());
+    // let duration3 = start3.elapsed();
+    // println!("Function executed in: {:?}", duration3);
+    // let start4 = Instant::now();
+    // build3(options.clone());
+    // let duration4 = start4.elapsed();
+    // println!("Function executed in: {:?}", duration4);
     // println!("{:?}",options);
 }
