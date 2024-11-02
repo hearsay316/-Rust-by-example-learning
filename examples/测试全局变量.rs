@@ -1,10 +1,9 @@
+use lazy_static::lazy_static;
 use std::collections::{HashMap, HashSet};
 use std::sync::{Arc, Mutex};
 use std::thread;
-use lazy_static::lazy_static;
 
 lazy_static! {
-
     static ref USERS: Arc<Mutex<HashMap<String, User>>> = Arc::new(Mutex::new(HashMap::new()));
     static ref COOKIES: Mutex<HashMap<String, String>> = Mutex::new(HashMap::new());
     static ref USED_INVITATION_CODES: Mutex<HashSet<String>> = Mutex::new(HashSet::new());
@@ -25,10 +24,8 @@ fn main() {
     //     is_admin: true,
     // };
 
-
     let mut handles = vec![];
     for i in 0..10 {
-
         let handle = thread::spawn(move || {
             let admin_user = User {
                 username: "admin".to_string(),
@@ -56,10 +53,10 @@ fn main() {
 }
 
 fn get_user(p0: &str) {
-    println!("啊啊啊get_user :{}",p0);
+    println!("啊啊啊get_user :{}", p0);
 
     let mut users = USERS.lock().expect("xsxsxs");
-    println!("啊啊啊:{:?}",users);
+    println!("啊啊啊:{:?}", users);
     // let user = users.get(p0).expect("sss");
     // println!("啊啊啊");
 }

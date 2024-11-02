@@ -1,13 +1,12 @@
 use lazy_static::lazy_static;
-use std::sync::{Mutex, Arc};
+use std::sync::{Arc, Mutex};
 use std::thread;
 
 lazy_static! {
-  pub  static ref COUNTER: Mutex<i32> = Mutex::new(0);
+    pub static ref COUNTER: Mutex<i32> = Mutex::new(0);
 }
 
 fn main() {
-
     let mut handles = vec![];
 
     for _ in 0..10 {
