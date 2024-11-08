@@ -1,7 +1,5 @@
 use std::path::PathBuf;
 use std::{env, fs};
-
-#[warn(unused)]
 #[derive(Debug)]
 struct Options {
     path: String,   // 文件路径
@@ -21,30 +19,27 @@ impl Options {
     // 修改文件夹后缀
     fn update_name_suffix(&self) {
         if get_path_file(&self.path) {
-            println!("输入的是个文件");
             update_name_suffix(PathBuf::from(&self.path), &self.suffix);
-            println!("修改完成");
-            return;
-        }
-        let entries = fs::read_dir(&self.path).expect("读取文件夹失败");
-        for entry in entries {
-            if let Ok(entry) = entry {
-                let file_path = entry.path();
-                if file_path.is_file() {
-                    update_name_suffix(file_path, &self.suffix);
-                }
-            }
+        } else {
+            update_path_name_suffix(&self.path, &self.suffix);
         }
         println!("修改完成");
     }
 }
-fn main() {
-    let args: Vec<String> = env::args().collect();
-    let options = Options::new(args);
-    println!("数据是: {:?}", options);
-    options.update_name_suffix();
+fn update_path_name_suffix(path: &str, suffix: &str) {
+    let entries = fs::read_dir(path).expect("读取文件夹失败");
+    for entry in entries {
+        if let Ok(entry) = entry {
+            let file_path = entry.path();
+            if file_path.is_file() {
+                update_name_suffix(file_path, suffix);
+            } else {
+                let file_path = file_path.to_string_lossy().to_string();
+                update_path_name_suffix(&file_path, suffix);
+            }
+        }
+    }
 }
-
 fn get_path_file(path: &str) -> bool {
     let metadata = fs::metadata(path).expect("路径不存在");
     metadata.is_file()
@@ -57,4 +52,10 @@ fn update_name_suffix(entry: PathBuf, suffix: &str) {
     println!("正在修改文件名称,{:?},{:?},{}", ren_name, old_name, suffix);
     fs::rename(old_name, ren_name).expect("改名字失败");
     println!("修改 {:?} 成功", entry);
+}
+fn main() {
+    let args: Vec<String> = env::args().collect();
+    let options = Options::new(args);
+    println!("数据是: {:?}", options);
+    options.update_name_suffix();
 }
