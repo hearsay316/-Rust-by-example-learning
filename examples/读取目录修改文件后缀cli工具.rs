@@ -59,3 +59,30 @@ fn main() {
     println!("数据是: {:?}", options);
     options.update_name_suffix();
 }
+#[cfg(test)]
+mod test {
+    use super::*;
+    #[test]
+    fn test_update_name_suffix() {
+        let path = "D:\\video\\2023-05-01\\1.mp4";
+        let suffix = "mp4";
+        update_name_suffix(PathBuf::from(path), suffix);
+    }
+    #[test]
+    fn test_get_path_file() {
+        let path = "D:\\video\\2023-05-01\\1.mp4";
+        assert_eq!(get_path_file(path), true);
+    }
+    #[test]
+    fn test_options_new() {
+        let args: Vec<String> = vec![
+            "".to_string(),
+            "D:\\video\\2023-05-01\\1.mp4".to_string(),
+            "mp4".to_string(),
+        ];
+        let options = Options::new(args);
+        println!("数据是: {:?}", options);
+        assert_eq!(options.path, "D:\\video\\2023-05-01\\1.mp4".to_string());
+        assert_eq!(options.suffix, "mp4".to_string());
+    }
+}
