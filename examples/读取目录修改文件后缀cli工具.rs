@@ -67,7 +67,7 @@ mod test {
         let path_dir = "./test1";
         let path_file = "1.mp4";
         let path = format!("{path_dir}/{path_file}");
-        create_dir_files(path_dir, vec![&path_file]);
+        create_dir_files_v2(vec![&path]);
         assert_eq!(get_path_file(&path), true);
         delete_dir(path_dir);
     }
@@ -139,6 +139,21 @@ mod test {
         for file_name in file_vec {
             let file_path = format!("{}/{}", dir_path, file_name);
             match fs::File::create(&file_path) {
+                Ok(_) => println!("文件创建成功"),
+                Err(e) => println!("创建文件时发生错误: {:?}", e),
+            }
+        }
+    }
+
+    fn create_dir_files_v2(file_vec: Vec<&str>) {
+        for file in file_vec {
+            let arr = file.split("/").collect::<Vec<_>>();
+            let dir_path = arr[0..arr.len() - 1].join("/");
+            match fs::create_dir_all(&dir_path) {
+                Ok(_) => println!("目录创建成功或已存在"),
+                Err(e) => println!("创建目录时发生错误: {:?}", e),
+            }
+            match fs::File::create(&file) {
                 Ok(_) => println!("文件创建成功"),
                 Err(e) => println!("创建文件时发生错误: {:?}", e),
             }
