@@ -62,7 +62,6 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::*;
-    use std::collections::HashSet;
     #[test]
     fn test_get_path_file() {
         let path_dir = "./test1";
@@ -171,35 +170,30 @@ mod test {
         delete_dir_v2(&vec!["./test/1.txt", "/test/2.txt", "./sss.ts"]);
     }
     fn delete_dir_v2(vec: &Vec<&str>) {
-        let hash_dir = vec
-            .iter()
-            .filter_map(|s| {
-                if !s.contains("/") {
+        vec.iter()
+            .filter_map(|path| {
+                if !path.contains("/") {
                     return None;
                 }
-                let dir_path = s.split("/").collect::<Vec<_>>();
+                let dir_path = path.split("/").collect::<Vec<_>>();
                 if dir_path[0] == "." && dir_path.len() == 2 {
-                    return Some(("".to_string(), s.to_string()));
+                    return Some(("".to_string(), path.to_string()));
                 }
                 if dir_path[0] == "." && dir_path.len() > 2 {
                     return Some((dir_path[0..2].join("/"), "".to_string()));
                 };
                 return Some((format!(".{}", dir_path[0..2].join("/")), "".to_string()));
             })
-            .collect::<HashSet<(String, String)>>();
-        for (dir, path) in hash_dir {
-            println!("dir : {}", dir.is_empty());
-            println!("path :{}", path.is_empty());
-            if !dir.is_empty() {
-                delete_dir(&dir);
-            }
-
-            if !path.is_empty() {
-                match fs::remove_file(path) {
-                    Ok(_) => println!("删除文件成功"),
-                    Err(e) => println!("删除文件时发生错误: {:?}", e),
+            .for_each(|(dir, path)| {
+                if !dir.is_empty() {
+                    delete_dir(&dir);
                 }
-            }
-        }
+                if !path.is_empty() {
+                    match fs::remove_file(path) {
+                        Ok(_) => println!("删除文件成功"),
+                        Err(e) => println!("删除文件时发生错误: {:?}", e),
+                    }
+                }
+            })
     }
 }
