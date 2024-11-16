@@ -62,6 +62,7 @@ fn main() {
 #[cfg(test)]
 mod test {
     use super::*;
+    use std::collections::HashSet;
     #[test]
     fn test_get_path_file() {
         let path_dir = "./test1";
@@ -195,5 +196,69 @@ mod test {
                     }
                 }
             })
+    }
+    #[test]
+    fn test_delete_dir_v3() {
+        let dir_data = DirData::new(&vec!["./test/1.txt", "/test/2.txt", "./sss.ts"]);
+        dir_data.create_dir_data();
+        dir_data.delete_dir_data();
+        println!("{:?}", dir_data);
+    }
+    #[derive(Debug)]
+    struct DirData {
+        dir_path: HashSet<String>,
+        file_vec: HashSet<String>,
+    }
+    impl DirData {
+        fn new(vec: &Vec<&str>) -> Self {
+            let mut dir_path = HashSet::new();
+            let mut file_vec = HashSet::new();
+            for path in vec {
+                if !path.contains("/") {
+                    continue;
+                }
+                let dir_path_arr = path.split("/").collect::<Vec<_>>();
+                if dir_path_arr[0] == "." && dir_path_arr.len() == 2 {
+                    file_vec.insert(path.to_string());
+                    continue;
+                }
+                if dir_path_arr[0] == "." && dir_path_arr.len() > 2 {
+                    dir_path.insert(dir_path_arr[0..2].join("/"));
+                    file_vec.insert(path.to_string());
+                    continue;
+                };
+                dir_path.insert(format!(".{}", dir_path_arr[0..2].join("/")));
+                file_vec.insert(format!(".{}", path));
+            }
+            Self { dir_path, file_vec }
+        }
+        fn create_dir_data(&self) {
+            self.dir_path
+                .iter()
+                .for_each(|dir| match fs::create_dir_all(dir) {
+                    Ok(_) => println!("目录创建成功或已存在"),
+                    Err(e) => println!("创建目录时发生错误: {:?}", e),
+                });
+            self.file_vec
+                .iter()
+                .for_each(|file| match fs::File::create(file) {
+                    Ok(_) => println!("文件创建成功"),
+                    Err(e) => println!("创建文件时发生错误: {:?}", e),
+                });
+        }
+        fn delete_dir_data(&self) {
+            self.file_vec
+                .iter()
+                .for_each(|file_path| match fs::remove_file(file_path) {
+                    Ok(_) => println!("删除文件成功"),
+                    Err(e) => println!("删除文件时发生错误: {:?}", e),
+                });
+            self.dir_path
+                .iter()
+                .for_each(|path| match fs::remove_dir_all(path) {
+                    Ok(_) => println!("删除目录成功"),
+                    Err(e) => println!("删除目录时发生错误: {:?}", e),
+                });
+        }
     }
 }
