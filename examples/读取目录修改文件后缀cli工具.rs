@@ -199,38 +199,52 @@ mod test {
     }
     #[test]
     fn test_delete_dir_v3() {
-        let dir_data = DirData::new(&vec!["./test/1.txt", "/test/2.txt", "./sss.ts"]);
+        let dir_data = DirData::new(&vec!["./test/1.txt", "/test/2.txt", "./sss.ts"], "mp4");
         dir_data.create_dir_data();
         dir_data.delete_dir_data();
         println!("{:?}", dir_data);
     }
+    fn change_extension(path: &str, new_ext: &str) -> PathBuf {
+        let mut path_buf = PathBuf::from(path);
+        path_buf.set_extension(new_ext);
+        path_buf
+    }
     #[derive(Debug)]
     struct DirData {
         dir_path: HashSet<String>,
-        file_vec: HashSet<String>,
+        file_path: HashSet<String>,
+        new_file_path: HashSet<PathBuf>,
     }
     impl DirData {
-        fn new(vec: &Vec<&str>) -> Self {
+        fn new(vec: &Vec<&str>, fix: &str) -> Self {
             let mut dir_path = HashSet::new();
-            let mut file_vec = HashSet::new();
+            let mut file_path = HashSet::new();
+            let mut new_file_path = HashSet::new();
             for path in vec {
                 if !path.contains("/") {
                     continue;
                 }
                 let dir_path_arr = path.split("/").collect::<Vec<_>>();
                 if dir_path_arr[0] == "." && dir_path_arr.len() == 2 {
-                    file_vec.insert(path.to_string());
+                    file_path.insert(path.to_string());
+                    new_file_path.insert(change_extension(path, fix));
                     continue;
                 }
                 if dir_path_arr[0] == "." && dir_path_arr.len() > 2 {
                     dir_path.insert(dir_path_arr[0..2].join("/"));
-                    file_vec.insert(path.to_string());
+                    file_path.insert(path.to_string());
+                    new_file_path.insert(change_extension(path, fix));
                     continue;
                 };
                 dir_path.insert(format!(".{}", dir_path_arr[0..2].join("/")));
-                file_vec.insert(format!(".{}", path));
+                file_path.insert(format!(".{}", path));
+                new_file_path.insert(change_extension(&format!(".{}", path), fix));
             }
-            Self { dir_path, file_vec }
+            Self {
+                dir_path,
+                file_path,
+                new_file_path,
+            }
         }
         fn create_dir_data(&self) {
             self.dir_path
@@ -239,7 +253,7 @@ mod test {
                     Ok(_) => println!("目录创建成功或已存在"),
                     Err(e) => println!("创建目录时发生错误: {:?}", e),
                 });
-            self.file_vec
+            self.file_path
                 .iter()
                 .for_each(|file| match fs::File::create(file) {
                     Ok(_) => println!("文件创建成功"),
@@ -247,18 +261,30 @@ mod test {
                 });
         }
         fn delete_dir_data(&self) {
-            self.file_vec
+            self.file_path
                 .iter()
                 .for_each(|file_path| match fs::remove_file(file_path) {
                     Ok(_) => println!("删除文件成功"),
                     Err(e) => println!("删除文件时发生错误: {:?}", e),
                 });
+            self.delete_dir_path();
+        }
+        fn delete_dir_path(&self) {
             self.dir_path
                 .iter()
                 .for_each(|path| match fs::remove_dir_all(path) {
                     Ok(_) => println!("删除目录成功"),
                     Err(e) => println!("删除目录时发生错误: {:?}", e),
                 });
+        }
+        fn delete_dir_new_data(&self) {
+            self.new_file_path
+                .iter()
+                .for_each(|file_path| match fs::remove_file(file_path) {
+                    Ok(_) => println!("删除文件成功"),
+                    Err(e) => println!("删除文件时发生错误: {:?}", e),
+                });
+            self.delete_dir_path();
         }
     }
 }
