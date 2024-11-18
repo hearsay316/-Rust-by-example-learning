@@ -199,7 +199,7 @@ mod test {
     }
     #[test]
     fn test_delete_dir_v3() {
-        let dir_data = DirData::new(&vec!["./test/1.txt", "/test/2.txt", "./sss.ts"], "mp4");
+        let dir_data = DirData::new(&vec!["./ss/test/1.txt", "/test/2.txt", "./sss.ts"], "mp4");
         dir_data.create_dir_data();
         dir_data.delete_dir_data();
         println!("{:?}", dir_data);
@@ -212,12 +212,14 @@ mod test {
     #[derive(Debug)]
     struct DirData {
         dir_path: HashSet<String>,
+        dir_path_all: HashSet<String>,
         file_path: HashSet<String>,
         new_file_path: HashSet<PathBuf>,
     }
     impl DirData {
         fn new(vec: &Vec<&str>, fix: &str) -> Self {
             let mut dir_path = HashSet::new();
+            let mut dir_path_all = HashSet::new();
             let mut file_path = HashSet::new();
             let mut new_file_path = HashSet::new();
             for path in vec {
@@ -225,6 +227,7 @@ mod test {
                     continue;
                 }
                 let dir_path_arr = path.split("/").collect::<Vec<_>>();
+                println!("{:?}", dir_path_arr);
                 if dir_path_arr[0] == "." && dir_path_arr.len() == 2 {
                     file_path.insert(path.to_string());
                     new_file_path.insert(change_extension(path, fix));
@@ -232,22 +235,28 @@ mod test {
                 }
                 if dir_path_arr[0] == "." && dir_path_arr.len() > 2 {
                     dir_path.insert(dir_path_arr[0..2].join("/"));
+                    dir_path_all.insert(dir_path_arr[0..dir_path_arr.len() - 1].join("/"));
                     file_path.insert(path.to_string());
                     new_file_path.insert(change_extension(path, fix));
                     continue;
                 };
                 dir_path.insert(format!(".{}", dir_path_arr[0..2].join("/")));
+                dir_path_all.insert(format!(
+                    ".{}",
+                    dir_path_arr[0..dir_path_arr.len() - 1].join("/")
+                ));
                 file_path.insert(format!(".{}", path));
                 new_file_path.insert(change_extension(&format!(".{}", path), fix));
             }
             Self {
                 dir_path,
+                dir_path_all,
                 file_path,
                 new_file_path,
             }
         }
         fn create_dir_data(&self) {
-            self.dir_path
+            self.dir_path_all
                 .iter()
                 .for_each(|dir| match fs::create_dir_all(dir) {
                     Ok(_) => println!("目录创建成功或已存在"),
