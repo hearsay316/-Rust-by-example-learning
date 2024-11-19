@@ -199,7 +199,10 @@ mod test {
     }
     #[test]
     fn test_delete_dir_v3() {
-        let dir_data = DirData::new(&vec!["./ss/test/1.txt", "/test/2.txt", "./sss.ts"], "mp4");
+        let dir_data = DirData::new(
+            &vec!["./ss/test/1.txt", "/test/2.txt", "./sss.ts", "zz.ds"],
+            "mp4",
+        );
         dir_data.create_dir_data();
         dir_data.delete_dir_data();
         println!("{:?}", dir_data);
@@ -224,6 +227,8 @@ mod test {
             let mut new_file_path = HashSet::new();
             for path in vec {
                 if !path.contains("/") {
+                    file_path.insert(format!("./{}", path));
+                    new_file_path.insert(change_extension(&format!("./{}", path), fix));
                     continue;
                 }
                 let dir_path_arr = path.split("/").collect::<Vec<_>>();
