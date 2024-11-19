@@ -200,7 +200,7 @@ mod test {
     #[test]
     fn test_delete_dir_v3() {
         let dir_data = DirData::new(
-            &vec!["./ss/test/1.txt", "/test/2.txt", "./sss.ts", "zz.ds"],
+            &vec!["./ss/test/1.txt", "test/2.txt", "./sss.ts", "zz.ds"],
             "mp4",
         );
         dir_data.create_dir_data();
@@ -239,19 +239,28 @@ mod test {
                     continue;
                 }
                 if dir_path_arr[0] == "." && dir_path_arr.len() > 2 {
-                    dir_path.insert(dir_path_arr[0..2].join("/"));
+                    dir_path.insert(dir_path_arr[0..dir_path_arr.len() - 1].join("/"));
                     dir_path_all.insert(dir_path_arr[0..dir_path_arr.len() - 1].join("/"));
                     file_path.insert(path.to_string());
                     new_file_path.insert(change_extension(path, fix));
                     continue;
                 };
-                dir_path.insert(format!(".{}", dir_path_arr[0..2].join("/")));
-                dir_path_all.insert(format!(
-                    ".{}",
+                let mut add_fix = ".";
+                if dir_path_arr[1] != "/" {
+                    add_fix = "./";
+                }
+                dir_path.insert(format!(
+                    "{}{}",
+                    add_fix,
                     dir_path_arr[0..dir_path_arr.len() - 1].join("/")
                 ));
-                file_path.insert(format!(".{}", path));
-                new_file_path.insert(change_extension(&format!(".{}", path), fix));
+                dir_path_all.insert(format!(
+                    "{}{}",
+                    add_fix,
+                    dir_path_arr[0..dir_path_arr.len() - 1].join("/")
+                ));
+                file_path.insert(format!("{}{}", add_fix, path));
+                new_file_path.insert(change_extension(&format!("{}{}", add_fix, path), fix));
             }
             Self {
                 dir_path,
