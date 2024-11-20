@@ -15,7 +15,9 @@ fn main() {
     }
     let mut ids = Vec::with_capacity(NTHREADS as usize);
     for _ in 0..NTHREADS {
-        ids.push(rx.recv());
+        let s = rx.recv();
+        ids.push(s);
+        println!("NTHREADS{:?}", s);
     }
-    println!("{:?}", ids);
+    println!("2111{:?}", ids);
 }
