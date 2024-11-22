@@ -79,10 +79,8 @@ where
     }
     pub fn clear(&mut self) {
         let mut current_sum = self.sum.lock().unwrap();
-        let new_sum: T = current_sum.clone();
-        self.history.push(new_sum);
+        self.history.push(current_sum.clone());
         *current_sum = T::default();
-        self.vec.clear();
     }
 }
 
@@ -95,5 +93,5 @@ fn main() {
     println!("{:?}", bing_fa);
     bing_fa.clear();
     bing_fa.set_data_vec(vec![11, 12, 13, 14, 15, 16, 17, 18, 19, 20]);
-    println!("{:?}", bing_fa.sum);
+    println!("{:?}", bing_fa);
 }
