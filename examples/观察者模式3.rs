@@ -187,10 +187,9 @@ where
     fn get_bing_fa(&mut self) -> &BingFa<T> {
         let (tx, rx) = mpsc::channel::<Vec<T>>();
         let json_hand = std::mem::replace(&mut self.json_hand, None);
-
         let tx2 = std::mem::replace(&mut self.tx, Some(tx));
-        drop(tx2.expect("tx错误了"));
-        json_hand.unwrap().join().expect("swswsd");
+        drop(tx2.expect("tx2: 错误了"));
+        json_hand.unwrap().join().expect("json_hand:  错误");
         let json_hand = json_hand_spawn(rx, self.bing_fa.sum.clone(), self.bing_fa.channel_number);
         let _ = std::mem::replace(&mut self.json_hand, Some(json_hand));
         self.info_bing_fa()
