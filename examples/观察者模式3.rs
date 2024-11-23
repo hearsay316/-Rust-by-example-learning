@@ -6,9 +6,9 @@ use std::sync::mpsc::Receiver;
 use std::sync::{Arc, Mutex};
 use std::thread::JoinHandle;
 use std::{fmt, thread};
-
+// 求和
 #[derive(Default)]
-pub struct BingFa<T>
+pub struct SeekingHarmony<T>
 where
     T: Add<Output = T> + Copy + Send + Default,
 {
@@ -18,19 +18,19 @@ where
     pub history: Vec<T>,
 }
 
-impl<T> Debug for BingFa<T>
+impl<T> Debug for SeekingHarmony<T>
 where
     T: Add<Output = T> + Copy + Send + Debug + Default,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("BingFa")
+        f.debug_struct("SeekingHarmony")
             .field("sum", &self.sum.lock().unwrap().clone())
             .field("channel_number", &self.channel_number)
             .field("history", &self.history)
             .finish()
     }
 }
-impl<T> BingFa<T>
+impl<T> SeekingHarmony<T>
 where
     T: Add<Output = T> + Copy + Send + Default + 'static + Debug,
 {
@@ -50,11 +50,11 @@ where
             channel_number,
             history: vec![],
         };
-        BingFa::run_bing_fa(&mut bing_fa);
+        SeekingHarmony::run_seeking_harmony(&mut bing_fa);
         bing_fa
     }
 
-    fn run_bing_fa(&mut self) {
+    fn run_seeking_harmony(&mut self) {
         loop {
             let mut handles = vec![];
             let mut channel_number_clone = self.channel_number;
@@ -80,7 +80,7 @@ where
     }
     pub fn set_data_vec(&mut self, vec_change: Vec<T>) {
         self.vec.extend(vec_change);
-        self.run_bing_fa();
+        self.run_seeking_harmony();
     }
     pub fn clear(&mut self) {
         let mut current_sum = self.sum.lock().unwrap();
@@ -89,22 +89,22 @@ where
     }
 }
 #[derive(Default)]
-pub struct BingFaV2<T>
+pub struct SeekingHarmonyV2<T>
 where
     T: Add<Output = T> + Copy + Send + Default,
 {
-    bing_fa: BingFa<T>,
+    seeking_harmony: SeekingHarmony<T>,
     tx: Option<mpsc::Sender<Vec<T>>>,
     json_hand: Option<thread::JoinHandle<()>>,
 }
 
-impl<T> Debug for BingFaV2<T>
+impl<T> Debug for SeekingHarmonyV2<T>
 where
     T: Add<Output = T> + Copy + Send + Debug + Default,
 {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        f.debug_struct("BingFaV2")
-            .field("sum", &self.bing_fa)
+        f.debug_struct("SeekingHarmonyV2")
+            .field("sum", &self.seeking_harmony)
             .finish()
     }
 }
@@ -165,47 +165,50 @@ where
         }
     })
 }
-impl<T> BingFaV2<T>
+impl<T> SeekingHarmonyV2<T>
 where
     T: Add<Output = T> + Copy + Send + Default + 'static + Debug,
 {
     pub fn new(vec: Vec<T>, channel_number: i32) -> Self {
         let (tx, rx) = mpsc::channel::<Vec<T>>();
-        let mut bing_fa = BingFa::new(vec, channel_number);
+        let bing_fa = SeekingHarmony::new(vec, channel_number);
         let sum = bing_fa.sum.clone();
         let json_hand = json_hand_spawn(rx, sum, channel_number);
-        let mut data = Self {
-            bing_fa,
+        Self {
+            seeking_harmony: bing_fa,
             tx: Some(tx),
             json_hand: Some(json_hand),
-        };
-        data
+        }
     }
     pub fn set_data_vec(&mut self, vec_change: Vec<T>) {
         self.tx.clone().unwrap().send(vec_change).unwrap();
     }
-    pub fn get_bing_fa(&mut self) -> &BingFa<T> {
+    pub fn get_seeking_harmony(&mut self) -> &SeekingHarmony<T> {
         let (tx, rx) = mpsc::channel::<Vec<T>>();
         let json_hand = std::mem::replace(&mut self.json_hand, None);
         let tx2 = std::mem::replace(&mut self.tx, Some(tx));
         drop(tx2.expect("tx2: 错误了"));
         json_hand.unwrap().join().expect("json_hand:  错误");
-        let json_hand = json_hand_spawn(rx, self.bing_fa.sum.clone(), self.bing_fa.channel_number);
+        let json_hand = json_hand_spawn(
+            rx,
+            self.seeking_harmony.sum.clone(),
+            self.seeking_harmony.channel_number,
+        );
         let _ = std::mem::replace(&mut self.json_hand, Some(json_hand));
-        self.info_bing_fa()
+        self.info_seeking_harmony()
     }
-    fn info_bing_fa(&mut self) -> &BingFa<T> {
-        let sum = self.bing_fa.get_sum();
-        let mut history = self.bing_fa.history.clone();
+    fn info_seeking_harmony(&mut self) -> &SeekingHarmony<T> {
+        let sum = self.seeking_harmony.get_sum();
+        let mut history = self.seeking_harmony.history.clone();
         history.push(sum.clone());
-        self.bing_fa.history = history.clone();
-        &self.bing_fa
+        self.seeking_harmony.history = history.clone();
+        &self.seeking_harmony
     }
-    pub fn end(self) -> BingFa<T> {
-        let BingFaV2 {
+    pub fn end(self) -> SeekingHarmony<T> {
+        let SeekingHarmonyV2 {
             json_hand,
             tx,
-            bing_fa,
+            seeking_harmony,
         } = self;
         drop(tx.expect("tx: 错误"));
         json_hand
@@ -213,29 +216,29 @@ where
             .join()
             .expect("json_hand: 2错误");
 
-        bing_fa
+        seeking_harmony
     }
     pub fn clear(&mut self) {
-        self.bing_fa.clear();
+        self.seeking_harmony.clear();
     }
     pub fn get_vec(&self) -> Vec<T> {
-        self.bing_fa.get_vec()
+        self.seeking_harmony.get_vec()
     }
     pub fn get_sum(&self) -> T {
-        self.bing_fa.get_sum()
+        self.seeking_harmony.get_sum()
     }
     pub fn get_vec_channel(&self) -> i32 {
-        self.bing_fa.get_vec_channel()
+        self.seeking_harmony.get_vec_channel()
     }
     pub fn get_history(&self) -> Vec<T> {
-        self.bing_fa.history.clone()
+        self.seeking_harmony.history.clone()
     }
 }
 //   pub fn set_data_vec_copy(&mut self, vec_chan
 
 fn main() {
     let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-    let mut bing_fa = BingFaV2::new(vec, 3);
+    let mut bing_fa = SeekingHarmonyV2::new(vec, 3);
     println!("{:?}", bing_fa);
     bing_fa.set_data_vec(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     bing_fa.set_data_vec(vec![9, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
@@ -243,12 +246,11 @@ fn main() {
     bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     // thread::sleep(Duration::from_secs(3));
     println!("{:?}", bing_fa);
-    let s = bing_fa.get_bing_fa();
-
+    let s = bing_fa.get_seeking_harmony();
     println!("{:?}", s);
     bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    let mut s = bing_fa.get_bing_fa();
-    s.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    let s = bing_fa.get_seeking_harmony();
+    println!("{:?}", s);
     let end = bing_fa.end();
     println!("{:?}", end);
 }
