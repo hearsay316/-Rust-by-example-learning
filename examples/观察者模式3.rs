@@ -181,10 +181,10 @@ where
         };
         data
     }
-    fn set_data_vec(&mut self, vec_change: Vec<T>) {
+    pub fn set_data_vec(&mut self, vec_change: Vec<T>) {
         self.tx.clone().unwrap().send(vec_change).unwrap();
     }
-    fn get_bing_fa(&mut self) -> &BingFa<T> {
+    pub fn get_bing_fa(&mut self) -> &BingFa<T> {
         let (tx, rx) = mpsc::channel::<Vec<T>>();
         let json_hand = std::mem::replace(&mut self.json_hand, None);
         let tx2 = std::mem::replace(&mut self.tx, Some(tx));
@@ -194,14 +194,14 @@ where
         let _ = std::mem::replace(&mut self.json_hand, Some(json_hand));
         self.info_bing_fa()
     }
-    pub fn info_bing_fa(&mut self) -> &BingFa<T> {
+    fn info_bing_fa(&mut self) -> &BingFa<T> {
         let sum = self.bing_fa.get_sum();
         let mut history = self.bing_fa.history.clone();
         history.push(sum.clone());
         self.bing_fa.history = history.clone();
         &self.bing_fa
     }
-    fn end(self) -> BingFa<T> {
+    pub fn end(self) -> BingFa<T> {
         let BingFaV2 {
             json_hand,
             tx,
@@ -247,8 +247,8 @@ fn main() {
 
     println!("{:?}", s);
     bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    let s = bing_fa.get_bing_fa();
-
+    let mut s = bing_fa.get_bing_fa();
+    s.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     let end = bing_fa.end();
     println!("{:?}", end);
 }
