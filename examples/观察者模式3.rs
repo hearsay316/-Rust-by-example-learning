@@ -185,7 +185,7 @@ where
     }
     pub fn get_seeking_harmony(&mut self) -> &SeekingHarmony<T> {
         let (tx, rx) = mpsc::channel::<Vec<T>>();
-        let json_hand = std::mem::replace(&mut self.json_hand, None);
+        let json_hand = self.json_hand.take();
         let tx2 = std::mem::replace(&mut self.tx, Some(tx));
         drop(tx2.expect("tx2: 错误了"));
         json_hand.unwrap().join().expect("json_hand:  错误");
@@ -194,14 +194,13 @@ where
             self.seeking_harmony.sum.clone(),
             self.seeking_harmony.channel_number,
         );
-        let _ = std::mem::replace(&mut self.json_hand, Some(json_hand));
+        self.json_hand = Some(json_hand);
         self.info_seeking_harmony()
     }
     fn info_seeking_harmony(&mut self) -> &SeekingHarmony<T> {
-        let sum = self.seeking_harmony.get_sum();
-        let mut history = self.seeking_harmony.history.clone();
-        history.push(sum.clone());
-        self.seeking_harmony.history = history.clone();
+        self.seeking_harmony
+            .history
+            .push(self.seeking_harmony.get_sum());
         &self.seeking_harmony
     }
     pub fn end(self) -> SeekingHarmony<T> {
