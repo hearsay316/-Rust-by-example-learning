@@ -95,7 +95,7 @@ where
 {
     seeking_harmony: SeekingHarmony<T>,
     tx: Option<mpsc::Sender<Vec<T>>>,
-    json_hand: Option<thread::JoinHandle<()>>,
+    json_hand: Option<JoinHandle<()>>,
 }
 
 impl<T> Debug for SeekingHarmonyV2<T>
@@ -117,10 +117,10 @@ where
 //
 //         let tx = std::mem::replace(&mut self.tx, None);
 //         // 显式地释放发送者 tx
-//         drop(tx.expect("xsxsx"));
+//         drop(tx.expect("关闭错误"));
 //
 //         // 等待 json_hand 线程结束，并处理可能的错误
-//         if let Err(e) = json_hand.expect("xsxsxs").join() {
+//         if let Err(e) = json_hand.expect("关闭错误").join() {
 //             eprintln!("Error joining thread: {:?}", e);
 //         }
 //     }

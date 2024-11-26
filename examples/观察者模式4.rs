@@ -3,16 +3,16 @@ use std::sync::{mpsc, Arc, Mutex};
 use std::thread::JoinHandle;
 use std::{env, fs, thread};
 
-pub struct Liuchu {
+pub struct Touch {
     path: String,
     fix: String,
 }
 
-impl Liuchu {
+impl Touch {
     pub fn new(vec: Vec<String>) -> Self {
         let current_dir = env::current_dir().expect("无法获取当前目录");
-        let pash_str = current_dir.to_string_lossy().to_string();
-        let path = vec.get(1).unwrap_or_else(|| &pash_str).clone();
+        let push_str = current_dir.to_string_lossy().to_string();
+        let path = vec.get(1).unwrap_or_else(|| &push_str).clone();
         println!("第15行{:?}", path);
         let fix = vec.get(2).unwrap_or(&"mp4".to_string()).clone();
         Self { path, fix }
@@ -33,31 +33,31 @@ impl Liuchu {
 
 fn count_file_number(path: &str, fix: &str) {
     let mut vec = vec![];
-    let back_value = path_name_update_V2(path, fix, &mut vec);
+    let back_value = path_name_update_v2(path, fix, &mut vec);
     // for i in vec{
     //     println!("{:?}", i);
     // }
     println!("{:?}", back_value);
     println!("{}", back_value.len());
     let length = back_value.len() as f64;
-    for (index, value) in back_value.iter().enumerate() {
+    for (index, _value) in back_value.iter().enumerate() {
         println!(
             "当前索引: {}%",
-            ((index + 1) as f64 / length * 100 as f64) as i32
+            ((index + 1) as f64 / length * 100f64) as i32
         );
     }
 }
 
-fn path_name_update_V2<'a>(path: &str, fix: &str, vec: &'a mut Vec<String>) -> &'a Vec<String> {
-    let netries = fs::read_dir(&path).unwrap();
-    println!("{:?}1111111", netries);
-    for i in netries {
+fn path_name_update_v2<'a>(path: &str, fix: &str, vec: &'a mut Vec<String>) -> &'a Vec<String> {
+    let entries = fs::read_dir(&path).unwrap();
+    println!("{:?}1111111", entries);
+    for i in entries {
         if let Ok(i) = i {
             let path = i.path();
             if path.is_file() {
                 vec.push(path.to_string_lossy().to_string());
             } else {
-                path_name_update_V2(&path.to_string_lossy().to_string(), fix, vec);
+                path_name_update_v2(&path.to_string_lossy().to_string(), fix, vec);
             }
         }
     }
@@ -68,7 +68,7 @@ fn path_name_update_v4(path: &str, fix: &str) -> Vec<String> {
     let (tx, rx) = mpsc::channel();
     let mut vec = Arc::new(Mutex::new(vec![]));
     println!("第121行/");
-    let vec_json = path_name_update_v3(path, fix, tx.clone(), vec.clone());
+    let _vec_json = path_name_update_v3(path, fix, tx.clone(), vec.clone());
     let mut all_files = vec![];
     let mut json_handlers = vec.lock().unwrap();
     for json in json_handlers.drain(..) {
@@ -88,9 +88,9 @@ fn path_name_update_v3(
     tx: mpsc::Sender<String>,
     vec: Arc<Mutex<Vec<JoinHandle<()>>>>,
 ) {
-    let netries = fs::read_dir(&path).unwrap();
+    let entries = fs::read_dir(&path).unwrap();
 
-    for i in netries {
+    for i in entries {
         if let Ok(entry) = i {
             let path = entry.path();
             let tx = tx.clone();
@@ -128,8 +128,8 @@ fn process_entry(path: PathBuf, fix: String, tx: mpsc::Sender<String>) -> JoinHa
 }
 
 fn path_name_update(path: &str, fix: &str) {
-    let netries = fs::read_dir(&path).unwrap();
-    for i in netries {
+    let entries = fs::read_dir(&path).unwrap();
+    for i in entries {
         if let Ok(i) = i {
             let path = i.path();
             if path.is_file() {
@@ -144,8 +144,8 @@ fn path_name_update(path: &str, fix: &str) {
 //
 fn path_is_files(path: &str) -> bool {
     let path = Path::new(path);
-    let matadate = fs::metadata(path).expect("无法判断文件类型");
-    matadate.is_file()
+    let metadata = fs::metadata(path).expect("无法判断文件类型");
+    metadata.is_file()
 }
 
 fn path_change_dir(path: PathBuf, fix: &str) {
@@ -202,7 +202,7 @@ mod test {
                     paths.insert(str_array[0..str_array.len() - 1].join("/"));
                     delete_paths.insert(str_array[0..2].join("/"));
                     files.insert(str.to_string().clone());
-                    delete_files.insert(changge_file_name(str.to_string(), lec));
+                    delete_files.insert(change_file_name(str.to_string(), lec));
                     continue;
                 };
                 if str_array_son2 == "." && str_array.len() == 2 {
@@ -211,19 +211,19 @@ mod test {
                     println!("{:?}", files);
                     paths.insert(format!("{}/", str_array_son1));
                     delete_paths.insert(format!("{}/", str_array_son1));
-                    delete_files.insert(changge_file_name(str.to_string(), lec));
+                    delete_files.insert(change_file_name(str.to_string(), lec));
                     continue;
                 }
                 if str_array_son2 != "." && str_array.len() == 2 {
                     files.insert(format!("./{}", str.to_string()));
-                    delete_files.insert(changge_file_name(format!("./{}", str.to_string()), lec));
+                    delete_files.insert(change_file_name(format!("./{}", str.to_string()), lec));
                     continue;
                 }
                 // return "".to_string();
                 paths.insert(format!("./{}", str_array_son1));
                 // delete_paths.insert(format!("./{}", str_array_son1));
                 files.insert(format!("./{}", str));
-                delete_files.insert(changge_file_name(format!(".{}", str), lec));
+                delete_files.insert(change_file_name(format!(".{}", str), lec));
             }
             FileManager {
                 files,
@@ -264,7 +264,7 @@ mod test {
             }
         }
 
-        fn action_delete_changge_name(&self) {
+        fn action_delete_change_name(&self) {
             for i in &self.delete_files {
                 println!("{:?}", i);
                 match fs::remove_file(i) {
@@ -281,10 +281,10 @@ mod test {
         }
     }
 
-    fn changge_file_name(str: String, houzhui: &str) -> PathBuf {
-        let mut pathbuf = PathBuf::from(str);
-        pathbuf.set_extension(houzhui);
-        pathbuf
+    fn change_file_name(str: String, houri: &str) -> PathBuf {
+        let mut path = PathBuf::from(str);
+        path.set_extension(houri);
+        path
     }
 
     #[test]
@@ -302,7 +302,7 @@ mod test {
 }
 
 //     #[test]
-//     fn workling_path_changge_dir() {
+//     fn working_path_change_dir() {
 //         // 测试成功
 //         let vec = &vec!["./ss.sa"];
 //         let doc = "mp4";
@@ -310,32 +310,32 @@ mod test {
 //         println!("{:?}", file_manager);
 //         file_manager.action_create();
 //         let path1 = PathBuf::from(vec[0]);
-//         path_changge_dir(path1, doc);
+//         path_change_dir(path1, doc);
 //         let res1 = path_is_files("./ss.mp4");
 //         assert_eq!(res1, true);
-//         file_manager.action_delete_changge_name();
+//         file_manager.action_delete_change_name();
 //         //测试文件夹
 //         let vec = &vec!["./ss"];
 //         let doc = "mp4";
 //         let file_manager = FileManager::new(vec, doc);
 //         file_manager.action_create();
 //         let path1 = PathBuf::from(vec[0]);
-//         path_changge_dir(path1, doc);
+//         path_change_dir(path1, doc);
 //         let res1 = path_is_files("./ss.mp4");
 //         assert_eq!(res1, true);
-//         file_manager.action_delete_changge_name();
+//         file_manager.action_delete_change_name();
 //     }
 
 //     #[test]
-//     fn working_liuchu_new() {
+//     fn working_touch_new() {
 //         // 测试正确
 //         let args = vec![String::from("test"), String::from("/path/to/dir"), String::from("mp4")];
-//         let l = super::Liuchu::new(args);
+//         let l = super::touch::new(args);
 //         assert_eq!(l.path, "/path/to/dir");
 //         assert_eq!(l.fix, "mp4");
 //         // 测试失败
 //         // let ss = vec![String::from("test") ];
-//         // let l = super::Liuchu::new(ss);
+//         // let l = super::touch::new(ss);
 //         // assert_eq!(l.path,"/cloudide/workspace/day-8");
 //         // assert_eq!(l.fix, "mp4");
 //     }
@@ -377,7 +377,7 @@ mod test {
 //         let res1 = path_is_files("./ss/ss.mp4");
 //         assert_eq!(res1, true);
 //         file_manager.action_delete();
-//         file_manager.action_delete_changge_name();
+//         file_manager.action_delete_change_name();
 //         //测试失败
 //         // let vec2 = &vec!["./ss"];
 //         // let doc = "mp4";
@@ -399,12 +399,12 @@ mod test {
 //         let file_manager = FileManager::new(vec, doc);
 //         println!("{:?}", file_manager);
 //         file_manager.action_create();
-//         let res1 = Liuchu::new(args);
+//         let res1 = Touch::new(args);
 //         println!("{:?}", res1);
 //         res1.get_path();
 //         let res2 = path_is_files("./testing.mp4");
 //         assert_eq!(res2, true);
-//         file_manager.action_delete_changge_name();
+//         file_manager.action_delete_change_name();
 //         //测试文件夹
 //         let args = vec![String::from("./test"), String::from("./test/test.re"), String::from("mp4")];
 //         let vec = &vec!["./test", "./test/test.re"];
@@ -412,11 +412,11 @@ mod test {
 //         let file_manager = FileManager::new(vec, doc);
 //         println!("{:?}", file_manager);
 //         file_manager.action_create();
-//         let res1 = Liuchu::new(args);
+//         let res1 = Touch::new(args);
 //         res1.get_path();
 //         let res2 = path_is_files("./test/test.mp4");
 //         assert_eq!(res2, true);
-//         file_manager.action_delete_changge_name();
+//         file_manager.action_delete_change_name();
 //     }
 // }
 
