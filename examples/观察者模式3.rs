@@ -95,7 +95,7 @@ where
 {
     seeking_harmony: SeekingHarmony<T>,
     tx: Option<mpsc::Sender<Vec<T>>>,
-    json_hand: Option<JoinHandle<()>>,
+    json_hand: Option<Vec<JoinHandle<()>>>,
 }
 
 impl<T> Debug for SeekingHarmonyV2<T>
@@ -108,62 +108,75 @@ where
             .finish()
     }
 }
-// impl<T> Drop for BingFaV2<T>
+// impl<T> Drop for SeekingHarmonyV2<T>
 // where
 //     T: Add<Output = T> + Copy + Send + Default,
 // {
 //     fn drop(&mut self) {
 //         let json_hand = std::mem::replace(&mut self.json_hand, None);
-//
 //         let tx = std::mem::replace(&mut self.tx, None);
 //         // 显式地释放发送者 tx
 //         drop(tx.expect("关闭错误"));
-//
-//         // 等待 json_hand 线程结束，并处理可能的错误
-//         if let Err(e) = json_hand.expect("关闭错误").join() {
-//             eprintln!("Error joining thread: {:?}", e);
+//         for worker in json_hand.unwrap() {
+//             worker.join().unwrap();
 //         }
 //     }
 // }
 fn json_hand_spawn<T>(
-    rx: Receiver<Vec<T>>,
+    rx: Arc<Mutex<Receiver<Vec<T>>>>,
     sum: Arc<Mutex<T>>,
     channel_number: i32,
-) -> JoinHandle<()>
+) -> Vec<JoinHandle<()>>
 where
     T: Add<Output = T> + Copy + Send + Debug + 'static,
 {
-    thread::spawn(move || {
-        println!("开始");
-        for i in rx.iter() {
-            let mut vec: Vec<T> = i.clone();
-            let mut array_arr = vec![];
-            loop {
-                let mut channel_number_clone = channel_number;
-                if vec.len() < channel_number as usize {
-                    channel_number_clone = vec.len() as i32;
-                }
-                let vec_first_10: Vec<T> = vec.drain(0..channel_number_clone as usize).collect();
-                println!("{:?}", vec_first_10);
-                for i in vec_first_10.clone() {
-                    let sum = sum.clone();
-                    let s = thread::spawn(move || {
-                        let mut total_sum = sum.lock().unwrap();
-                        *total_sum = *total_sum + i;
-                    });
-                    array_arr.push(s);
-                }
+    let mut join_handle_handles = vec![];
 
-                if vec.is_empty() {
+    for _ in 0..channel_number {
+        let rx = rx.clone();
+        let sum = sum.clone();
+        let handler = thread::spawn(move || loop {
+            println!("开始");
+            let result_i = rx.lock().unwrap().recv();
+            match result_i {
+                Ok(vec_arr) => {
+                    let mut vec: Vec<T> = vec_arr.clone();
+                    let mut array_arr = vec![];
+                    loop {
+                        let mut channel_number_clone = channel_number;
+                        if vec.len() < channel_number as usize {
+                            channel_number_clone = vec.len() as i32;
+                        }
+                        let vec_first_10: Vec<T> =
+                            vec.drain(0..channel_number_clone as usize).collect();
+                        println!("{:?}", vec_first_10);
+                        for i in vec_first_10.clone() {
+                            let sum = sum.clone();
+                            let s = thread::spawn(move || {
+                                let mut total_sum = sum.lock().unwrap();
+                                *total_sum = *total_sum + i;
+                            });
+                            array_arr.push(s);
+                        }
+
+                        if vec.is_empty() {
+                            break;
+                        }
+                    }
+                    for i in array_arr {
+                        i.join().unwrap();
+                    }
+                    println!("结束了");
+                }
+                Err(_) => {
+                    println!("Worker disconnected; shutting down.");
                     break;
                 }
             }
-            for i in array_arr {
-                i.join().unwrap();
-            }
-            println!("结束了");
-        }
-    })
+        });
+        join_handle_handles.push(handler);
+    }
+    join_handle_handles
 }
 impl<T> SeekingHarmonyV2<T>
 where
@@ -173,7 +186,8 @@ where
         let (tx, rx) = mpsc::channel::<Vec<T>>();
         let bing_fa = SeekingHarmony::new(vec, channel_number);
         let sum = bing_fa.sum.clone();
-        let json_hand = json_hand_spawn(rx, sum, channel_number);
+        let arc_rx = Arc::new(Mutex::new(rx));
+        let json_hand = json_hand_spawn(arc_rx, sum, channel_number);
         Self {
             seeking_harmony: bing_fa,
             tx: Some(tx),
@@ -188,9 +202,13 @@ where
         let json_hand = self.json_hand.take();
         let tx2 = std::mem::replace(&mut self.tx, Some(tx));
         drop(tx2.expect("tx2: 错误了"));
-        json_hand.unwrap().join().expect("json_hand:  错误");
+        for worker in json_hand.unwrap() {
+            // println!("Shutting down worker {}", worker.id);
+            worker.join().unwrap();
+        }
+        let arc_rx = Arc::new(Mutex::new(rx));
         let json_hand = json_hand_spawn(
-            rx,
+            arc_rx,
             self.seeking_harmony.sum.clone(),
             self.seeking_harmony.channel_number,
         );
@@ -210,11 +228,14 @@ where
             seeking_harmony,
         } = self;
         drop(tx.expect("tx: 错误"));
-        json_hand
-            .expect("json_hand: 错误")
-            .join()
-            .expect("json_hand: 2错误");
-
+        // json_hand
+        //     .expect("json_hand: 错误")
+        //     .join()
+        //     .expect("json_hand: 2错误");
+        for worker in json_hand.unwrap() {
+            // println!("Shutting down worker {}", worker.id);
+            worker.join().unwrap();
+        }
         seeking_harmony
     }
     pub fn clear(&mut self) {
@@ -236,20 +257,20 @@ where
 //   pub fn set_data_vec_copy(&mut self, vec_chan
 
 fn main() {
-    let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+    let vec = vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
     let mut bing_fa = SeekingHarmonyV2::new(vec, 3);
-    println!("{:?}", bing_fa);
-    bing_fa.set_data_vec(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    bing_fa.set_data_vec(vec![9, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    bing_fa.set_data_vec(vec![8, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // println!("{:?}", bing_fa);
+    // bing_fa.set_data_vec(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // bing_fa.set_data_vec(vec![9, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // bing_fa.set_data_vec(vec![8, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
     // thread::sleep(Duration::from_secs(3));
-    println!("{:?}", bing_fa);
-    let s = bing_fa.get_seeking_harmony();
-    println!("{:?}", s);
-    bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
-    let s = bing_fa.get_seeking_harmony();
-    println!("{:?}", s);
+    // println!("{:?}", bing_fa);
+    // let s = bing_fa.get_seeking_harmony();
+    // println!("{:?}", s);
+    // bing_fa.set_data_vec(vec![7, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+    // let s = bing_fa.get_seeking_harmony();
+    // println!("{:?}", s);
     let end = bing_fa.end();
     println!("{:?}", end);
 }
