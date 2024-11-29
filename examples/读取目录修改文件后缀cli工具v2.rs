@@ -47,10 +47,10 @@ fn thread_spawn(rx: Arc<Mutex<Receiver<(PathBuf, String)>>>) -> Vec<JoinHandle<(
             match data {
                 Ok((path, suffix)) => {
                     update_file_name_suffix(path.clone(), suffix);
-                    println!("修改 {:?} 成功", path);
+                    println!("线程 {} 修改 {:?} 成功", i, path);
                 }
                 Err(_) => {
-                    println!(" 线程失败{}", i);
+                    println!("线程失败{} 退出", i);
                     break;
                 }
             }
@@ -58,6 +58,24 @@ fn thread_spawn(rx: Arc<Mutex<Receiver<(PathBuf, String)>>>) -> Vec<JoinHandle<(
         handles.push(handle);
     }
     handles
+}
+
+fn drain_filter<T: Clone, F>(vec: &mut Vec<T>, mut f: F) -> Vec<T>
+where
+    F: FnMut(&T) -> bool,
+{
+    let mut removed = Vec::new();
+    let mut i = 0;
+    while i < vec.len() {
+        if f(&vec[i]) {
+            removed.push(vec[i].clone());
+            vec[i..].rotate_left(1);
+            vec.pop();
+        } else {
+            i += 1;
+        }
+    }
+    removed
 }
 impl Options {
     fn new(args: Vec<String>) -> Self {
@@ -67,8 +85,14 @@ impl Options {
         let current_dir_str = current_dir.to_string_lossy().to_string();
         println!("当前目录 :{:?}", current_dir_str);
         let mut args: Vec<String> = args.clone();
-        let path = args.drain(1..).collect::<Vec<String>>();
-        let suffix = "mp4".to_string();
+        if args.len() < 2 {
+            panic!("参数不正确");
+        }
+        let mut path = args.drain(1..).collect::<Vec<String>>();
+        let suffix = drain_filter(&mut path, |s| !(s.contains(".") || s.contains("/")))
+            .get(0)
+            .unwrap_or(&"mp4".to_string())
+            .clone();
         let (tx, rx) = mpsc::channel();
         let rx = Arc::new(Mutex::new(rx));
         let vec_joins = thread_spawn(rx);
@@ -151,7 +175,7 @@ fn main() {
     let path = format!("{path_dir}/{path_file}");
     // create_dir_files_v2(vec![&path]);
     // assert_eq!(get_path_file(&path), true);
-    let mut options = Options::new(vec!["".to_string(), path]);
+    let options = Options::new(vec!["".to_string(), path]);
     options.update_name_suffix();
 }
 #[cfg(test)]
@@ -167,7 +191,7 @@ mod test {
         let path2 = "./test2/2.mp3".to_string();
         create_dir_files_v2(vec![&path, &path2]);
         assert_eq!(get_path_file(&path), true);
-        let mut options = Options::new(vec!["".to_string(), path, path2]);
+        let options = Options::new(vec!["".to_string(), path, path2]);
         println!("{:?}", options);
         options.update_name_suffix();
         // options.end();
@@ -318,6 +342,7 @@ mod test {
         path_buf.set_extension(new_ext);
         path_buf
     }
+    #[allow(unused)]
     #[derive(Debug)]
     struct DirData {
         dir_path: HashSet<String>,
@@ -406,6 +431,7 @@ mod test {
                     Err(e) => println!("删除目录时发生错误: {:?}", e),
                 });
         }
+        #[allow(unused)]
         fn delete_dir_new_data(&self) {
             self.new_file_path
                 .iter()
