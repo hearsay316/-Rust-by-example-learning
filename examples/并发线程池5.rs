@@ -70,7 +70,7 @@ impl DataChange {
         let mut files = vec![];
         let mut paths = vec![];
         let mut vec = Arc::new(Mutex::new(vec![]));
-        let (tx, mut rx) = mpsc::channel(128);
+        let (tx, mut rx) = mpsc::channel(32);
         for i in self.data.drain(..) {
             let vec_clone = vec.clone();
             let tx_clone = tx.clone();
@@ -81,11 +81,6 @@ impl DataChange {
         }
         for handle in files {
             handle.await.expect("错误了");
-        }
-
-        let mut vec_lock = vec.lock().await;
-        for i in vec_lock.drain(..) {
-            i.await.unwrap();
         }
         drop(tx);
 
@@ -105,13 +100,14 @@ pub async fn path_name_update(
 ) {
     let mut netries = fs::read_dir(&path).await.unwrap();
     println!("第111行{:?}", netries);
-    while let Some(entry) = netries.next_entry().await.expect("sss") {
+
+    while let Some(entry) = netries.next_entry().await.expect("cuowu") {
         let path = entry.path();
         let tx = tx.clone();
         let fix = fix.to_string();
         let vec = vec.clone();
         println!("第118行:{:?}", path);
-        let handle = process_entry(path, fix.to_string(), tx); //取消了r                                                         x的传参
+        let _ = process_entry(path, fix.to_string(), tx); //取消了r                                                         x的传参
     }
 }
 pub fn process_entry(path: PathBuf, fix: String, tx: mpsc::Sender<String>) -> JoinHandle<()> {
@@ -130,10 +126,10 @@ pub fn process_entry(path: PathBuf, fix: String, tx: mpsc::Sender<String>) -> Jo
                 vec.clone(),
             )
             .await;
-            let mut json_handlers = vec.lock().await;
-            for json in json_handlers.drain(..) {
-                json.await.unwrap();
-            }
+            // let mut json_handlers = vec.lock().await;
+            // for json in json_handlers.drain(..) {
+            //     json.await.unwrap();
+            // }
         } //新加的
     })
 }
@@ -159,11 +155,10 @@ pub async fn joson_hande(rx: Arc<Mutex<Vec<JoinHandle<()>>>>) -> Vec<JoinHandle<
 }
 #[cfg(test)]
 mod tests {
-    use crate::DataChange;
-
+    use super::*;
     #[tokio::test]
     async fn test_work() {
-        let vec = vec!["".to_string(), "mp4".to_string(), "./examples".to_string()];
+        let vec = vec!["".to_string(), "mp4".to_string(), "./src".to_string()];
         let mut data = DataChange::new(vec).await;
         println!("{:?}", data);
         data.run().await;
@@ -172,7 +167,7 @@ mod tests {
 #[tokio::main]
 async fn main() {
     let vec = vec!["".to_string(), "mp4".to_string(), "./examples".to_string()];
-    let mut data = DataChange::new(vec).await;
+    let data = DataChange::new(vec).await;
     println!("{:?}", data);
     data.run().await;
 }
