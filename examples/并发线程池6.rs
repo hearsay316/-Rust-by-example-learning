@@ -18,10 +18,6 @@ where
     sender: Option<mpsc::Sender<T>>,
 }
 
-struct Job<T> {
-    f: Arc<dyn Fn(T) + Send + Sync + 'static>,
-}
-
 impl<T> ThreadPool<T>
 where
     T: Send + 'static + std::fmt::Debug,
