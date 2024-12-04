@@ -117,7 +117,7 @@ fn main() {
 
     for stream in listener.incoming().take(20) {
         let _stream = stream.unwrap();
-        pool.execute("这个是粗俄欧".to_string());
+        pool.execute("测试消息".to_string());
     }
 
     println!("Shutting down.");
