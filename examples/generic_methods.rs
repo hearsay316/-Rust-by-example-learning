@@ -19,8 +19,8 @@ impl Calculator {
     }
 
     // 泛型方法，带有多个类型参数
-    fn convert<T, U>(&self, value: T) -> U 
-    where 
+    fn convert<T, U>(&self, value: T) -> U
+    where
         T: std::fmt::Display,
         U: std::fmt::Display + From<T>,
     {
@@ -37,9 +37,9 @@ fn main() {
     let calc = Calculator::new(42);
 
     // 使用display方法，可以传入不同类型
-    calc.display("Hello");  // 字符串
-    calc.display(123);      // 数字
-    calc.display(true);     // 布尔值
+    calc.display("Hello"); // 字符串
+    calc.display(123); // 数字
+    calc.display(true); // 布尔值
 
     // 使用add方法
     let sum_i32 = calc.add(10, 20);

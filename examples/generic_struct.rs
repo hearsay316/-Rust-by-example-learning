@@ -28,12 +28,18 @@ impl Point<f64> {
 fn main() {
     // 使用整数类型的 Point
     let integer_point = Point { x: 5, y: 10 };
-    println!("Integer point: x = {}, y = {}", integer_point.x, integer_point.y);
+    println!(
+        "Integer point: x = {}, y = {}",
+        integer_point.x, integer_point.y
+    );
 
     // 使用浮点数类型的 Point
     let float_point = Point { x: 1.0, y: 4.0 };
     println!("Float point: x = {}, y = {}", float_point.x, float_point.y);
-    println!("Distance from origin: {}", float_point.distance_from_origin());
+    println!(
+        "Distance from origin: {}",
+        float_point.distance_from_origin()
+    );
 
     // 使用构造函数创建 Point
     let point = Point::new(3, 7);

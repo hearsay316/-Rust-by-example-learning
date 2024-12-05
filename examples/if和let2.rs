@@ -3,6 +3,10 @@
 
 #![allow(dead_code)]
 
+fn foo(x: Option<i32>) {
+    let num = x.unwrap_or_else(|| 0);
+    println!("{:?}", num);
+}
 fn main() {
     let number = Some(7);
     let letter: Option<i32> = None;
@@ -25,4 +29,5 @@ fn main() {
     } else {
         println!("I don't like letters. Let's go with an emotion :)!");
     }
+    // println!("{}",);
 }
