@@ -14,7 +14,6 @@ async fn main() -> anyhow::Result<()> {
             println!("File contents: {}", contents);
         }
     }
-    Ok(())
 }
 
 async fn watch_file_change(tx: watch::Sender<bool>) {
