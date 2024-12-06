@@ -6,18 +6,19 @@ use tokio::sync::watch;
 
 #[tokio::main]
 async fn main() -> anyhow::Result<()> {
+    let filename = "data.txt";
     let (tx, mut rx) = watch::channel(false);
-    tokio::spawn(watch_file_change(tx));
+    tokio::spawn(watch_file_change(filename, tx));
     loop {
         let _ = rx.changed().await;
-        if let Ok(contents) = read_file("data.txt").await {
+        if let Ok(contents) = read_file(filename).await {
             println!("File contents: {}", contents);
         }
     }
 }
 
-async fn watch_file_change(tx: watch::Sender<bool>) {
-    let path = PathBuf::from("data.txt");
+async fn watch_file_change(filename: &str, tx: watch::Sender<bool>) {
+    let path = PathBuf::from(filename);
     let mut last_modified = None;
     loop {
         if let Ok(metadata) = path.metadata() {
