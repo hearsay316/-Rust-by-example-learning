@@ -1,8 +1,6 @@
 use std::{env, fs};
 
-struct FileNum {
-    path: String,
-}
+struct FileNum();
 impl FileNum {
     fn from(path: Vec<String>) -> i64 {
         if path.len() < 2 {
