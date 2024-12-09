@@ -29,7 +29,6 @@ fn update_path_name_suffix(path: &str, num: i64) -> i64 {
 }
 fn main() {
     let vec = env::args().collect::<Vec<_>>();
-    println!("{:?}", vec);
     let num = FileNum::from(vec);
     println!("{}", num);
 }
