@@ -34,5 +34,5 @@ fn main() {
     println!("{}", contains(1));
     println!("{}", contains(2));
     println!("{}", contains(9));
-    println!("{:?}", haystack);
+    // println!("{:?}", haystack);
 }
