@@ -9,5 +9,5 @@ fn main() {
     v.x += 1;
     v.x += 1;
     S.x += 1;
-    print!("{}{}", v.x, S.x);
+    print!("{}/n{}", v.x, S.x);
 }
