@@ -38,4 +38,6 @@ pub fn div(a: i32, b: i32) -> i32 {
     a / b
 }
 
-fn main() {}
+fn main() {
+    println!("这个是一个log");
+}
