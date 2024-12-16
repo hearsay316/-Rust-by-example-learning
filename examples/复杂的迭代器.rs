@@ -24,4 +24,13 @@ fn main() {
     let mut iter = v.iter();
     println!("{:?}", v);
     println!("{:?}", iter.count());
+
+    use std::num::NonZeroUsize;
+    let a = [1, 2, 3, 4];
+    let mut iter = a.iter();
+
+    assert_eq!(iter.advance_by(2), Ok(()));
+    assert_eq!(iter.next(), Some(&3));
+    assert_eq!(iter.advance_by(0), Ok(()));
+    assert_eq!(iter.advance_by(100), Err(NonZeroUsize::new(99).unwrap())); // 仅跳过 `&4`
 }
