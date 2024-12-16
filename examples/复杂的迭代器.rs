@@ -12,7 +12,16 @@ fn main() {
     assert_eq!(v_cloned, vec![1, 2, 3]);
     assert_eq!(v_map, vec![1, 2, 3]);
 
-    let a_iter = a.iter().cycle();
-    a_iter.for_each(|x| println!("{}", x));
-    println!("这个是测试")
+    // let a_iter = a.iter().cycle().count();
+    // println!("{:?}", a_iter);
+    // a_iter.for_each(|x| println!("{}", x));
+    println!("这个是测试");
+    let sum_vec = [Some(1), Some(2), Some(3)];
+    let sum = sum_vec.into_iter().sum::<Option<i32>>();
+    println!("{:?}", sum);
+    println!("{:?}", sum_vec);
+    let v = ["1".to_string(), "2".to_string(), "3".to_string()];
+    let mut iter = v.iter();
+    println!("{:?}", v);
+    println!("{:?}", iter.count());
 }
