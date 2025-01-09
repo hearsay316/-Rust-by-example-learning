@@ -15,6 +15,13 @@ fn main() {
         }
     }
     println!("imperative style :{}", acc);
+    // Rust 的基本类型包括:
+    // 整数类型: i8, i16, i32, i64, i128, isize
+    //          u8, u16, u32, u64, u128, usize 
+    // 浮点类型: f32, f64
+    // 布尔类型: bool
+    // 字符类型: char
+    // 单元类型: () (unit type)
     let sum_of_squared_odd_unmbers: u32 = (0..)
         .map(|n| n * n)
         .take_while(|&n| n < upper)
