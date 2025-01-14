@@ -8,4 +8,5 @@ fn main() {
     }
 
     assert_eq!(Foo::new().0, Foo(0).0);
+    let a = "1".parse::<String>().unwrap();
 }
