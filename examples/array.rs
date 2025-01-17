@@ -8,6 +8,6 @@ fn main() {
 
     // 该循环打印: 0 1 2
     for x in array {
-        print!("{x} ");
+        println!("{x} ");
     }
 }
